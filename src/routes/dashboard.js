@@ -1,9 +1,9 @@
-import { Router } from "express";
+    import { Router } from "express";
 
-const router = Router()
+    const router = Router()
 
-router.get('/', (req, res) => {
-    res.render('dashboard', { title: 'Dashboard' })
-})
+    router.get('/', (req, res) => {
+        res.render('dashboard/dashboard', { title: 'Dashboard' })
+    })
 
-export default router
+    export default router
