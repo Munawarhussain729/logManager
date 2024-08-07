@@ -31,9 +31,6 @@ body {
     box-sizing: border-box;
     background-color: #3b4b58;
     border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 h1, h2, p {
@@ -41,7 +38,7 @@ h1, h2, p {
 }
 
 #calendar {
-    max-width: 300px; /* Make calendar smaller */
+    max-width: 500px;
     width: 100%;
 }
 
