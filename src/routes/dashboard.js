@@ -3,7 +3,7 @@
     const router = Router()
 
     router.get('/', (req, res) => {
-        res.render('dashboard/dashboard', { title: 'Dashboard' })
+        res.render('layouts/main', { title: 'Dashboard' })
     })
 
     export default router

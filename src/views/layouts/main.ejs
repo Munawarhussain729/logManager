@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
+    <link href='/dashboard/dashboard.css' rel='stylesheet' />
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="nameBadge">
+            <p>MH</p>
+        </div>
+        <p>Munawar Hussain</p>
+        <p>Full Stack</p>
+        <ul>
+            <li><a href="#" style="color: #ecf0f1;">Link 1</a></li>
+            <li><a href="#" style="color: #ecf0f1;">Link 2</a></li>
+            <li><a href="#" style="color: #ecf0f1;">Link 3</a></li>
+        </ul>
+    </div>
+    <div class="dashboard">
+        <div class="body">
+            <h1>Welcome to the <%= title %>
+            </h1>
+            <div class="flex-container">
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Time logged in July 2024</p>
+                    <p class="boldText">84.0 hours</p>
+                </div>
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Today's Hours</p>
+                    <p class="boldText">0.0 hours</p>
+                </div>
+            </div>
+        </div>
+        <div class="calendar">
+            <h2>Calendar</h2>
+            <div id='calendar'></div>
+        </div>
+    </div>
+</body>
+
+</html>
