@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 // Serve static files
 app.use(express.static(path.join(__dirname, 'views')));
 
-app.use('/dashboard', dashboardRouter);
+app.use('/', dashboardRouter);
 
 app.get('/', (req, res) => {
     return res.send('Hey');
