@@ -23,13 +23,13 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
 .calendar {
     flex: 1;
     padding: 15px;
     box-sizing: border-box;
-    background-color: #3b4b58;
     border-radius: 8px;
 }
 
@@ -62,10 +62,7 @@ h1, h2, p {
     font-size: 34px;
     font-weight: 600;
 }
-.body {
-    background-color: #3b4b58;
-    padding: 35px;
-}
+
 .flex-container{
     display: flex;
     justify-content: space-between;
@@ -80,4 +77,10 @@ h1, h2, p {
 .sidebar-items > h6{
     margin: 10px 5px;
     font-weight: 700;
+}
+
+.content{
+    width: 100%;
+    height: 100vh;
+    padding: 30px;
 }
