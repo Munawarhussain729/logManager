@@ -84,3 +84,44 @@ h1, h2, p {
     height: 100vh;
     padding: 30px;
 }
+
+.daily-logs-input{
+    width: 250px;
+    outline-color: #1abc9c;
+    background-color: #4e6d8b;
+    padding: 5px 10px;  
+    color: white;
+    height: 40px;
+    margin: 10px 20px;
+    border-radius: 15px;
+}
+
+.daily-logs-input::placeholder, .log-text-area::placeholder{
+    color: white;
+    opacity: 1;
+}
+
+.input-field-wrapper{
+    margin: 10px 0px;
+    display: flex;
+    align-items: center;
+}
+
+.log-text-area{
+    outline-color: #1abc9c;
+    background-color: #4e6d8b;
+    padding: 5px 10px;  
+    width: 400px;
+    color: white;
+    margin: 10px 20px;
+    border-radius: 15px;
+}
+
+.add-log-button{
+    background-color: #4e6d8b;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 20px;
+    outline: #4e6d8b;
+    border: 1px solid #4e6d8b;
+}

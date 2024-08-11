@@ -1,20 +1,26 @@
 <!-- src/views/dailyLogs/dailyLogs.ejs -->
 <div>
     <h1>Daily Logs</h1>
-    <div>
-        <input placeholder="Date" type="date" />
-        <select class="form-select" aria-label="Default select example">
+    <div class="input-field-wrapper">
+        <input placeholder="Date" type="date" class="daily-logs-input"/>
+        <select class="form-select daily-logs-input" aria-label="Default select example" >
             <option selected>Select project</option>
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
         </select>
-        <select class="form-select" aria-label="Default select example">
+        <select class=" daily-logs-input" aria-label="Default select example" >
             <option selected>Open this select menu</option>
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
         </select>
-        <input type="number"/>
+        <input placeholder="Enter hours" type="number" class="daily-logs-input"/>
+    </div>
+    <div class="input-field-wrapper">
+       <textarea class="log-text-area" rows="3" placeholder="Enter log description" ></textarea>
+       <textarea class="log-text-area" rows="3" placeholder="Enter important points" ></textarea>
+       <textarea class="log-text-area" rows="3" placeholder="Enter any blockers" ></textarea>      
+        <button class="add-log-button">Add Log</button>
     </div>
 </div>
