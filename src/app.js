@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 dotenv.config();
 
 const app = express();
+app.use(express.urlencoded({ extended: true }))
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', './src/views');

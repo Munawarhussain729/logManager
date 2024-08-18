@@ -17,12 +17,12 @@
                 <option value="2">Project Manager</option>
                 <option value="3">Team Lead</option>
             </select>
-            <input placeholder="Enter hours" type="number" class="daily-logs-input" />
+            <input name="log-hours" placeholder="Enter hours" type="number" class="daily-logs-input" />
         </div>
         <div class="input-field-wrapper">
-            <textarea class="log-text-area" rows="3" placeholder="Enter log description"></textarea>
-            <textarea class="log-text-area" rows="3" placeholder="Enter important points"></textarea>
-            <textarea class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
+            <textarea name="description" class="log-text-area" rows="3" placeholder="Enter log description"></textarea>
+            <textarea name="tomorrows-plan" class="log-text-area" rows="3" placeholder="Enter tomorrows plan"></textarea>
+            <textarea name="blockers" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
             <button class="add-log-button">Add Log</button>
         </div>
     </form>
