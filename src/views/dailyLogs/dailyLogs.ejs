@@ -21,7 +21,8 @@
         </div>
         <div class="input-field-wrapper">
             <textarea name="description" class="log-text-area" rows="3" placeholder="Enter log description"></textarea>
-            <textarea name="tomorrows-plan" class="log-text-area" rows="3" placeholder="Enter tomorrows plan"></textarea>
+            <textarea name="tomorrows-plan" class="log-text-area" rows="3"
+                placeholder="Enter tomorrows plan"></textarea>
             <textarea name="blockers" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
             <button class="add-log-button">Add Log</button>
         </div>
@@ -39,15 +40,31 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>2023-09-20</td>
-                <td>sample project</td>
-                <td>Developer</td>
-                <td>Description of the project </td>
-                <td>Nothing special for tomorrows plan</td>
-                <td>No important notes for tomorrow</td>
-                <td>4</td>
-            </tr>
+            <% logs.forEach(log=> { %>
+                <tr>
+                    <td>
+                        <%= new Date(log.created_on).toISOString().split('T')[0] %>
+                    </td>
+                    <td>
+                        <%= log.project_id %>
+                    </td> <!-- Adjust this if you have a way to convert project_id to project name -->
+                    <td>
+                        <%= log.user_role %>
+                    </td> <!-- Adjust this if you have a way to convert user_role to role name -->
+                    <td>
+                        <%= log.message %>
+                    </td>
+                    <td>
+                        <%= log.tomorrow_plan %>
+                    </td>
+                    <td>
+                        <%= log.blocker %>
+                    </td>
+                    <td>
+                        <%= log.duration %>
+                    </td>
+                </tr>
+                <% }); %>
         </tbody>
     </table>
 </div>
