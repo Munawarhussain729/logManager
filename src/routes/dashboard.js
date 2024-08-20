@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { getDashboard } from "../controllers/dashboardController.js";
+import { getDailyLogs, postDailyLog } from "../controllers/dailylogsController.js";
 
 const router = Router();
 
@@ -26,24 +28,7 @@ const tempLogData = [
         user_role: 2
       }
 ]
-router.get('/', (req, res) => {
-    res.render('layouts/main', { title: 'Dashboard', contentFile: '../dashboard/dashboard' });
-});
 
-router.get('/dashboard', (req, res) => {
-    res.render('layouts/main', { title: 'Dashboard', contentFile: '../dashboard/dashboard' });
-});
-
-router.get('/daily-logs', (req, res) => {
-    console.log("Request object ", req);
-    
-    res.render('layouts/main', { title: 'Daily Logs',  contentFile: '../dailyLogs/dailyLogs', logs:tempLogData });
-});
-
-router.post('/daily-logs', (req, res) => {
-    console.log("Request object ", req.body);
-    res.render('layouts/main', { title: 'Daily Logs',  contentFile: '../dailyLogs/dailyLogs'  });
-    // res.render('layouts/main', { title: 'Daily Logs',  contentFile: '../dailyLogs/dailyLogs'  });
-});
+router.get('/',getDashboard);
 
 export default router;

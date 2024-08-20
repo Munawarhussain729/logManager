@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandlers.js';
 import dashboardRouter from './routes/dashboard.js';
+import dailyLogRouter from './routes/dailyLogs.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -22,6 +23,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'views')));
 
 app.use('/', dashboardRouter);
+app.use('/', dailyLogRouter);
 
 app.get('/', (req, res) => {
     return res.send('Hey');
