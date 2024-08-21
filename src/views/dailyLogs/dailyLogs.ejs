@@ -4,18 +4,19 @@
         <div class="input-field-wrapper">
             <input name="date" required placeholder="Date" type="date" class="daily-logs-input" />
             <select name="project" required class="form-select daily-logs-input" aria-label="Default select example">
+                <option selected>Select your project</option>
                 <%projects.forEach(project=> { %>
-                    <option value=<%= project.id %>>
-                        <%= project.name>
+                    <option value="<%= project.id %>" >
+                        <%= project.name %>
                     </option>
                     <% }); %>
 
             </select>
-            <select name="role" required class=" daily-logs-input" aria-label="Default select example">
+            <select name="role" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your role</option>
-                <option value="1">Develper</option>
-                <option value="2">Project Manager</option>
-                <option value="3">Team Lead</option>
+                <%roles.forEach(role => { %>
+                    <option value="<%= role.id %>"><%= role.title %></option>
+                <% }); %>
             </select>
             <input name="hours" placeholder="Enter hours" type="number" class="daily-logs-input" />
         </div>
