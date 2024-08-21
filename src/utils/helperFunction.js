@@ -11,13 +11,42 @@ export const fetchAllLogs = async () => {
         const result = await client.query('SELECT * FROM logs');
         return result.rows
     } catch (error) {
-        console.error('Error fetching logs')
+        console.error('Error fetching logs ', error)
         throw new Error('Failed to fetch logs')
-    }
-    finally {
+    }finally {
         if (client) {
-             client.release();
+            client.release();
         }
 
+    }
+}
+
+export const fetchAllProjects = async ()=>{
+    let client
+    try {
+        client = await pool.connect();
+        const result = await client.query('SELECT * FROM projects')
+        return result.rows
+    } catch (error) {
+        console.error('Error while fetching projects ', error)
+        throw new Error('Failed to fetch projects')
+    }finally{
+        if(client){
+            client.release()
+        }
+    }
+}
+
+export const createNewLog = async ({project, role, hours, description}) => {
+    let client
+    try {
+
+    } catch (error) {
+        console.error('Error inserting logs ', error)
+        throw new Error('Failed to store logs')
+    }finally {
+        if (client) {
+            client.release()
+        }
     }
 }
