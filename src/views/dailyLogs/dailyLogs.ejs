@@ -2,7 +2,8 @@
     <h1>Daily Logs</h1>
     <form action="/daily-logs" method="post">
         <div class="input-field-wrapper">
-            <input name="date" required placeholder="Date" type="date" class="daily-logs-input" />
+            <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
+            <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
             <select name="project" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your project</option>
                 <%projects.forEach(project=> { %>
@@ -12,19 +13,19 @@
                     <% }); %>
 
             </select>
-            <select name="role" required class="form-select daily-logs-input" aria-label="Default select example">
+            <select name="user_role" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your role</option>
                 <%roles.forEach(role => { %>
                     <option value="<%= role.id %>"><%= role.title %></option>
                 <% }); %>
             </select>
-            <input name="hours" placeholder="Enter hours" type="number" class="daily-logs-input" />
+            <input name="duration" placeholder="Enter hours" type="number" class="daily-logs-input" />
         </div>
         <div class="input-field-wrapper">
-            <textarea name="description" class="log-text-area" rows="3" placeholder="Enter log description"></textarea>
-            <textarea name="tomorrows-plan" class="log-text-area" rows="3"
+            <textarea name="message" class="log-text-area" rows="3" placeholder="Enter log description"></textarea>
+            <textarea name="tomorrows_plan" class="log-text-area" rows="3"
                 placeholder="Enter tomorrows plan"></textarea>
-            <textarea name="blockers" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
+            <textarea name="blocker" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
             <button class="add-log-button">Add Log</button>
         </div>
     </form>

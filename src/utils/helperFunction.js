@@ -53,16 +53,27 @@ export const fetchAllRoles = async () => {
     }
 }
 
-export const createNewLog = async ({ project, role, hours, description }) => {
-    let client
+export const createNewLog = async ({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role }) => {
+    let client;
     try {
+        client = await pool.connect();
 
+        const query = `
+            INSERT INTO logs (created_on, message, blocker, duration, tomorrow_plan, project_id, user_id, user_role)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `;
+
+        const values = [created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role];
+
+        const result = await client.query(query, values);
+
+        console.log("Result:", result);
     } catch (error) {
-        console.error('Error inserting logs ', error)
-        throw new Error('Failed to store logs')
+        console.error('Error inserting logs:', error);
+        throw new Error('Failed to store logs');
     } finally {
         if (client) {
-            client.release()
+            client.release();
         }
     }
-}
+};
