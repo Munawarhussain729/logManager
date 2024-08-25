@@ -24,13 +24,11 @@ export const getDailyLogs = async (req, res) => {
 
 export const postDailyLog = async (req, res) => {
     try {
-        console.log("Request body is ", req.body);
         const { created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role } = req.body
+        createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
         const allLogs = await fetchAllLogs()
         const allProjects = await fetchAllProjects()
-        const allRoles = await fetchAllRoles()
-        createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
-        console.log("Request body ", req.body)
+        const allRoles = await fetchAllRoles()  
         res.render('layouts/main',
             {
                 title: 'Daily Logs',
