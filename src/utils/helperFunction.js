@@ -77,3 +77,23 @@ export const createNewLog = async ({ created_on, message, blocker, duration, tom
         }
     }
 };
+
+export const getTotalHours = async({user_id}) => {
+    let client
+    try {
+        client = await pool.connect()
+        const query = `SELECT SUM (duration) FROM logs WHERE user_id = ${user_id}`
+        const result = await client.query(query)
+        if(result.rows?.length <= 0){
+            return 
+        }
+        return result.rows[0]
+    } catch (error) {
+        console.error('Error geting hours ', error)
+        throw new Error('Failed to get hours')
+    }finally{
+        if(client){
+            client.release();
+        }
+    }
+}
