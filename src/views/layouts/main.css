@@ -1,8 +1,10 @@
 /* public/css/dashboard.css */
 body {
     font-family: Arial, sans-serif;
-    background-color: #2c3e50; /* Light dark shade */
-    color: #ecf0f1; /* Light color for text */
+    background-color: #2c3e50;
+    /* Light dark shade */
+    color: #ecf0f1;
+    /* Light color for text */
     margin: 0;
     padding: 0;
     display: flex;
@@ -33,7 +35,9 @@ body {
     border-radius: 8px;
 }
 
-h1, h2, p {
+h1,
+h2,
+p {
     margin: 0;
 }
 
@@ -43,7 +47,7 @@ h1, h2, p {
 }
 
 .fc-today {
-    background: #1abc9c !important; /* Highlight current date */
+    background: #1abc9c !important;
 }
 
 .nameBadge {
@@ -68,56 +72,57 @@ h1, h2, p {
     justify-content: space-between;
 }
 
-.sidebar-items{
+.sidebar-items {
     margin-top: 50px;
     display: flex;
     flex-direction: column;
 }
 
-.sidebar-items > h6{
+.sidebar-items>h6 {
     margin: 10px 5px;
     font-weight: 700;
 }
 
-.content{
+.content {
     width: 100%;
     height: 100vh;
     padding: 30px;
 }
 
-.daily-logs-input{
+.daily-logs-input {
     width: 250px;
     outline-color: #1abc9c;
     background-color: #4e6d8b;
-    padding: 5px 10px;  
+    padding: 5px 10px;
     color: white;
     height: 40px;
     margin: 10px 20px;
     border-radius: 15px;
 }
 
-.daily-logs-input::placeholder, .log-text-area::placeholder{
+.daily-logs-input::placeholder,
+.log-text-area::placeholder {
     color: white;
     opacity: 1;
 }
 
-.input-field-wrapper{
+.input-field-wrapper {
     margin: 10px 0px;
     display: flex;
     align-items: center;
 }
 
-.log-text-area{
+.log-text-area {
     outline-color: #1abc9c;
     background-color: #4e6d8b;
-    padding: 5px 10px;  
+    padding: 5px 10px;
     width: 400px;
     color: white;
     margin: 10px 20px;
     border-radius: 15px;
 }
 
-.add-log-button{
+.add-log-button {
     background-color: #4e6d8b;
     color: white;
     border-radius: 25px;

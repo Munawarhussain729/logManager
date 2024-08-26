@@ -108,3 +108,9 @@ h1, h2, p {
 .roles-container >p{
     font-weight: 700;
 }
+.datepicker{
+    display: none;
+}
+#datepicker{
+    display: none;
+}
