@@ -31,8 +31,8 @@
     </form>
     <table>
         <thead aria-colcount="7">
-            <tr>
-                <th style="width: 10%; min-width: 100px;">Date</th>
+            <tr class="border">
+                <th class="p-3" style="width: 10%; min-width: 100px;">Date</th>
                 <th style="width: 10%; min-width: 100px;">Project</th>
                 <th style="width: 10%; min-width: 100px;">Role</th>
                 <th style="width: 25%; min-width: 300px;">Description</th>
@@ -43,7 +43,7 @@
         </thead>
         <tbody>
             <% logs.forEach(log=> { %>
-                <tr>
+                <tr class="logs-table-row">
                     <td>
                         <%= new Date(log.created_on).toISOString().split('T')[0] %>
                     </td>

@@ -130,3 +130,11 @@ p {
     outline: #4e6d8b;
     border: 1px solid #4e6d8b;
 }
+
+.logs-table-row{
+    border: 1px groove snow;
+}
+
+.logs-table-row > td{
+    padding: 5px;
+}
