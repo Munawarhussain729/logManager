@@ -3,7 +3,7 @@
     <form id="log-form" action="/daily-logs">
         <div class="input-field-wrapper">
             <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
-            <input type="hidden" name="log_id" value="" />
+            <input type="hidden" name="id" value="" />
             <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
             <select name="project" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your project</option>
@@ -89,10 +89,10 @@
                     .then((data) => {
                         const updatedDate = new Date(data?.created_on).toISOString().split('T')[0];
                         submitButton.innerHTML = 'Update Log';
-                        form.action = `/daily-logs/${logId}`;
+                        form.action = `/daily-logs}`;
                         form.method = "PATCH";
 
-                        document.querySelector('input[name="log_id"]').value = logId;
+                        document.querySelector('input[name="id"]').value = logId;
                         document.querySelector('input[name="created_on"]').value = updatedDate;
                         document.querySelector('select[name="project"]').value = data.project_id;
                         document.querySelector('select[name="user_role"]').value = data.user_role;
@@ -106,13 +106,13 @@
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
-            const logId = document.querySelector('input[name="log_id"]').value;
+            const logId = document.querySelector('input[name="id"]').value;
             const formData = new FormData(form);
             console.log("Form data is ", formData);
             console.log("log id is ", logId);
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl = logId ? `/daily-logs/${logId}` : form.action;
+            const actionUrl ='/daily-logs';
 
             fetch(actionUrl, {
                 method: method,

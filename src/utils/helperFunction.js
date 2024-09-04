@@ -68,6 +68,7 @@ export const createNewLog = async ({ created_on, message, blocker, duration, tom
         const result = await client.query(query, values);
 
         console.log("Result:", result);
+        return result.rows
     } catch (error) {
         console.error('Error inserting logs:', error);
         throw new Error('Failed to store logs');
