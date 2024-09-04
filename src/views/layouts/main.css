@@ -133,6 +133,7 @@ p {
 
 .logs-table-row{
     border: 1px groove snow;
+    cursor: pointer;
 }
 
 .logs-table-row > td{

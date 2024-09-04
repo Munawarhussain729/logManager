@@ -1,13 +1,14 @@
 <div>
     <h1>Daily Logs</h1>
-    <form action="/daily-logs" method="post">
+    <form id="log-form" action="/daily-logs">
         <div class="input-field-wrapper">
             <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
+            <input type="hidden" name="log_id" value="" />
             <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
             <select name="project" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your project</option>
                 <%projects.forEach(project=> { %>
-                    <option value="<%= project.id %>" >
+                    <option value="<%= project.id %>">
                         <%= project.name %>
                     </option>
                     <% }); %>
@@ -15,9 +16,11 @@
             </select>
             <select name="user_role" required class="form-select daily-logs-input" aria-label="Default select example">
                 <option selected>Select your role</option>
-                <%roles.forEach(role => { %>
-                    <option value="<%= role.id %>"><%= role.title %></option>
-                <% }); %>
+                <%roles.forEach(role=> { %>
+                    <option value="<%= role.id %>">
+                        <%= role.title %>
+                    </option>
+                    <% }); %>
             </select>
             <input name="duration" placeholder="Enter hours" type="number" class="daily-logs-input" />
         </div>
@@ -26,7 +29,7 @@
             <textarea name="tomorrows_plan" class="log-text-area" rows="3"
                 placeholder="Enter tomorrows plan"></textarea>
             <textarea name="blocker" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
-            <button class="add-log-button">Add Log</button>
+            <button type="submit" class="add-log-button">Add Log</button>
         </div>
     </form>
     <table>
@@ -43,7 +46,7 @@
         </thead>
         <tbody>
             <% logs.forEach(log=> { %>
-                <tr class="logs-table-row">
+                <tr class="logs-table-row" data-id="<%= log.id %>">
                     <td>
                         <%= new Date(log.created_on).toISOString().split('T')[0] %>
                     </td>
@@ -70,3 +73,64 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.logs-table-row');
+        const form = document.getElementById("log-form");
+        const submitButton = document.querySelector('.add-log-button');
+
+        rows.forEach((item) => {
+            item.addEventListener('click', function () {
+                const logId = this.getAttribute("data-id");
+                console.log("Id is ", logId);
+                fetch(`/daily-logs/${logId}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const updatedDate = new Date(data?.created_on).toISOString().split('T')[0];
+                        submitButton.innerHTML = 'Update Log';
+                        form.action = `/daily-logs/${logId}`;
+                        form.method = "PATCH";
+
+                        document.querySelector('input[name="log_id"]').value = logId;
+                        document.querySelector('input[name="created_on"]').value = updatedDate;
+                        document.querySelector('select[name="project"]').value = data.project_id;
+                        document.querySelector('select[name="user_role"]').value = data.user_role;
+                        document.querySelector('input[name="duration"]').value = data.duration;
+                        document.querySelector('textarea[name="message"]').value = data.message;
+                        document.querySelector('textarea[name="tomorrows_plan"]').value = data.tomorrow_plan;
+                        document.querySelector('textarea[name="blocker"]').value = data.blocker;
+                    });
+            });
+        });
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const logId = document.querySelector('input[name="log_id"]').value;
+            const formData = new FormData(form);
+            console.log("Form data is ", formData);
+            console.log("log id is ", logId);
+
+            const method = logId ? "PATCH" : "POST";
+            const actionUrl = logId ? `/daily-logs/${logId}` : form.action;
+
+            fetch(actionUrl, {
+                method: method,
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    debugger
+                    console.log("Form submitted successfully:", data);
+                    location.reload(); // Optionally reload the page after submission
+                })
+                .catch(error => {
+
+                    console.error("Error submitting form:", error);
+                    debugger
+                });
+        });
+
+
+    });
+</script>
