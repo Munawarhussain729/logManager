@@ -5,13 +5,17 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandlers.js';
 import dashboardRouter from './routes/dashboard.js';
 import dailyLogRouter from './routes/dailyLogs.js';
 import path from 'path';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
-app.use(express.urlencoded({ extended: true }))
+const upload = multer(); // Initialize multer without any file storage config
+
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(upload.none());
 app.set('view engine', 'ejs');
 app.set('views', './src/views');
 

@@ -8,7 +8,7 @@ export const fetchAllLogs = async () => {
     let client
     try {
         client = await pool.connect();
-        const result = await client.query('SELECT * FROM logs');
+        const result = await client.query('SELECT * FROM logs ORDER BY created_on');
         return result.rows
     } catch (error) {
         console.error('Error fetching logs ', error)

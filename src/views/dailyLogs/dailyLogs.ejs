@@ -108,15 +108,23 @@
             event.preventDefault();
             const logId = document.querySelector('input[name="id"]').value;
             const formData = new FormData(form);
-            console.log("Form data is ", formData);
-            console.log("log id is ", logId);
+            formData.forEach((value, key) => {
+                console.log(key, value);
+            });
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl ='/daily-logs';
+            const actionUrl = '/daily-logs';
 
             fetch(actionUrl, {
                 method: method,
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
             })
                 .then(response => response.json())
                 .then(data => {
