@@ -1,71 +1,42 @@
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            <%= title %>
-        </title>
-        <!-- <link href='https://unpkg.com/fullcalendar@5.10.1/main.min.css' rel='stylesheet' /> -->
-        <link href="/css/dashboard.css" rel="stylesheet">
-        <style>
-          .datepicker.datepicker-inline {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <!-- <link href='https://unpkg.com/fullcalendar@5.10.1/main.min.css' rel='stylesheet' /> -->
+    <link href="/css/dashboard.css" rel="stylesheet">
+    <style>
+        .datepicker.datepicker-inline {
             display: none !important;
         }
-        </style>
-    </head>
+    </style>
+</head>
 
-    <body>
-        <div class="dashboard">
-            <div class="body">
-                <h1>Welcome to the <%= title %>
-                </h1>
-                <div class="flex-container">
-                    <div>
-                        <p style="margin-top: 10px; margin-bottom: 10px;">Time logged in July 2024</p>
-                        <p class="boldText">
-                            <%= duration %> hours
-                        </p>
-                    </div>
-                    <div>
-                        <p style="margin-top: 10px; margin-bottom: 10px;">Today's Hours</p>
-                        <p class="boldText" id="daily-hours">0.0 hours</p>
-                    </div>
+<body>
+    <div class="dashboard">
+        <div class="body">
+            <h1>Welcome to the <%= title %>
+            </h1>
+            <div class="flex-container">
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Today's Hours</p>
+                    <p class="boldText" id="daily-hours">0.0 hours</p>
+                </div>
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Time logged in July 2024</p>
+                    <p class="boldText">
+                        <%= duration %> hours
+                    </p>
                 </div>
             </div>
-            <div id='calendar'></div>
         </div>
+    </div>
 
-        <script src='https://unpkg.com/fullcalendar@5.10.1/main.min.js'></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const calendarEl = document.getElementById('calendar');
 
-                if (!calendarEl) {
-                    console.error('Calendar element not found!');
-                    return;
-                }
+</body>
 
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    dateClick: function (info) {
-                        console.log('Clicked date:', info.dateStr);
-
-                        fetch(`/?date=${info.dateStr}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                document.getElementById('daily-hours').innerText = `${data.hours} hours`;
-                            })
-                            .catch(error => {
-                                console.error('Error fetching practice hours:', error);
-                            });
-                    }
-                });
-
-                calendar.render();
-            });
-        </script>
-    </body>
-
-    </html>
+</html>
