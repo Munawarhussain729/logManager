@@ -1,3 +1,4 @@
+import { USER_ID } from "../../constants.js";
 import dbConfig from "../dbconfig.js";
 import { createNewLog, fetchAllLogs, fetchAllProjects, fetchAllRoles } from "../utils/helperFunction.js";
 import pg from "pg"
@@ -17,7 +18,7 @@ export const getDailyLogs = async (req, res) => {
                 logs: allLogs,
                 projects: allProjects,
                 roles: allRoles,
-                loggedInUserId: 1
+                loggedInUserId: USER_ID
             });
     } catch (error) {
         console.error('Daily loog error ', error)
@@ -33,15 +34,17 @@ export const postDailyLog = async (req, res) => {
         const allLogs = await fetchAllLogs()
         const allProjects = await fetchAllProjects()
         const allRoles = await fetchAllRoles()
-        res.render('layouts/main',
-            {
-                title: 'Daily Logs',
-                contentFile: '../dailyLogs/dailyLogs',
-                logs: allLogs,
-                projects: allProjects,
-                roles: allRoles,
-                loggedInUserId: 1
-            });
+        console.log("All logs are ", allLogs);
+        res.json(allLogs); 
+        // res.render('layouts/main',
+        //     {
+        //         title: 'Daily Logs',
+        //         contentFile: '../dailyLogs/dailyLogs',
+        //         logs: allLogs,
+        //         projects: allProjects,
+        //         roles: allRoles,
+        //         loggedInUserId: USER_ID
+        //     });
     } catch (error) {
         console.error('Daily logs post error ', error)
         res.status(500).send('Internal Server Error')

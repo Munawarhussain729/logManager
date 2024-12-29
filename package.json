@@ -8,7 +8,8 @@
     "start": "nodemon src/index.js",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "knex migrate:latest --knexfile knexfile.mjs"
+    "migrate": "knex migrate:latest --knexfile knexfile.mjs",
+    "rollback": "knex migrate:rollback --knexfile knexfile.mjs"
 
   },
   "author": "",

@@ -75,70 +75,63 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const rows = document.querySelectorAll('.logs-table-row');
-        const form = document.getElementById("log-form");
-        const submitButton = document.querySelector('.add-log-button');
+   document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById("log-form");
+    const submitButton = document.querySelector('.add-log-button');
+    const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
 
-        rows.forEach((item) => {
-            item.addEventListener('click', function () {
-                const logId = this.getAttribute("data-id");
-                console.log("Id is ", logId);
-                fetch(`/daily-logs/${logId}`)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        const updatedDate = new Date(data?.created_on).toISOString().split('T')[0];
-                        submitButton.innerHTML = 'Update Log';
-                        form.action = `/daily-logs}`;
-                        form.method = "PATCH";
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
 
-                        document.querySelector('input[name="id"]').value = logId;
-                        document.querySelector('input[name="created_on"]').value = updatedDate;
-                        document.querySelector('select[name="project"]').value = data.project_id;
-                        document.querySelector('select[name="user_role"]').value = data.user_role;
-                        document.querySelector('input[name="duration"]').value = data.duration;
-                        document.querySelector('textarea[name="message"]').value = data.message;
-                        document.querySelector('textarea[name="tomorrows_plan"]').value = data.tomorrow_plan;
-                        document.querySelector('textarea[name="blocker"]').value = data.blocker;
-                    });
-            });
+        const logId = document.querySelector('input[name="id"]').value;
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
         });
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const logId = document.querySelector('input[name="id"]').value;
-            const formData = new FormData(form);
-            formData.forEach((value, key) => {
-                console.log(key, value);
+        const method = logId ? "PATCH" : "POST";
+        const actionUrl = '/daily-logs';
+
+        fetch(actionUrl, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(updatedLogs => {
+            console.log("Form submitted successfully:", updatedLogs);
+
+            // Update the table rows dynamically
+            logsTableBody.innerHTML = ''; // Clear existing logs
+
+            updatedLogs.forEach(log => {
+                const row = document.createElement('tr');
+                row.classList.add('logs-table-row');
+                row.setAttribute('data-id', log.id);
+
+                row.innerHTML = `
+                    <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
+                    <td>${log.project_id}</td>
+                    <td>${log.user_role}</td>
+                    <td>${log.message}</td>
+                    <td>${log.tomorrow_plan}</td>
+                    <td>${log.blocker}</td>
+                    <td>${log.duration}</td>
+                `;
+
+                logsTableBody.appendChild(row);
             });
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
 
-            const method = logId ? "PATCH" : "POST";
-            const actionUrl = '/daily-logs';
-
-            fetch(actionUrl, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    debugger
-                    console.log("Form submitted successfully:", data);
-                    location.reload(); // Optionally reload the page after submission
-                })
-                .catch(error => {
-
-                    console.error("Error submitting form:", error);
-                    debugger
-                });
+            // Optionally, reset the form after submission
+            form.reset();
+        })
+        .catch(error => {
+            console.error("Error submitting form:", error);
         });
-
-
     });
+});
+
 </script>
