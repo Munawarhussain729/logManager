@@ -1,10 +1,10 @@
 
 
 const dbConfig = {
-  user: 'postgres',      // replace with your PostgreSQL username
+  user: 'log_manager',      // replace with your PostgreSQL username
   host: 'localhost',         // or the address of your PostgreSQL server
-  database: 'logmanager',  // replace with your PostgreSQL database name
-  password: 'postgres',  // replace with your PostgreSQL password
+  database: 'log_manager_db',  // replace with your PostgreSQL database name
+  password: 'log_manager',  // replace with your PostgreSQL password
   port: 5432,                // default PostgreSQL port
 };
 
