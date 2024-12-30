@@ -4,6 +4,6 @@ import { getDailyLogs, postDailyLog } from "../controllers/dailylogsController.j
 
 const router = Router();
 
-router.get('/',getDashboard);
+router.get('/dashboard',getDashboard);
 
 export default router;

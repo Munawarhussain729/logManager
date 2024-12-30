@@ -11,7 +11,9 @@
 </head>
 
 <body>
-    <%- include('../sidebar/sidebar.ejs') %>
+    <% if (showSidebar) { %>
+        <%- include('../sidebar/sidebar.ejs') %>
+    <% } %>
     <div class="content">
         <%- include(contentFile) %> 
     </div>

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandlers.js';
 import dashboardRouter from './routes/dashboard.js';
+import authRouter from './routes/auth.js';
 import dailyLogRouter from './routes/dailyLogs.js';
 import path from 'path';
 import multer from 'multer';
@@ -26,8 +27,9 @@ const __dirname = path.dirname(__filename);
 // Serve static files
 app.use(express.static(path.join(__dirname, 'views')));
 
-app.use('/', dashboardRouter);
-app.use('/', dailyLogRouter);
+app.use('/', authRouter);
+// app.use('/dashboard', dashboardRouter);
+// app.use('/', dailyLogRouter);
 
 app.get('/', (req, res) => {
     return res.send('Hey');
