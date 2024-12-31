@@ -6,7 +6,7 @@ import pg from "pg"
 const { Pool } = pg
 const pool = new Pool(dbConfig)
 
-export const getLogin = async (req, res) => {
+export const getLogin = async (req, res) => {    
     try {
         res.render('layouts/main',
             {
@@ -44,12 +44,9 @@ export const postLogin = async (req, res) => {
         }
         console.log("Users ", user);
 
-        res.render('layouts/main',
-            {
-                title: 'Login',
-                contentFile: '../login/login',
-                showSidebar: false
-            });
+        req.session.user = { id: user.id, email: user.email, name: user.name };
+
+        res.redirect('/dashboard');
     } catch (error) {
         console.error('Login loog error ', error)
         res.status(500).send('Internal server error');

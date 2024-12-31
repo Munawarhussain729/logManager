@@ -6,6 +6,9 @@ const { Pool } = pg;
 const pool = new Pool(dbConfig);
 
 export const getDashboard = async (req, res) => {
+    // if (!req.session.user) {
+    //     return res.redirect('/login'); // Redirect if not logged in
+    // }
     let client = await pool.connect();
     try {
         const date = new Date();
@@ -16,7 +19,7 @@ export const getDashboard = async (req, res) => {
         // const currentDayHours = await client.query(`SELECT SUM(duration) FROM logs WHERE user_id = $1 AND created_on = $2`, ["91a2ed64-e083-4405-a09f-a26aec56927d", formattedDate]);
         console.log("Current day houts ", currentDayHours.rows)
         let todayHours = 0
-        if(currentDayHours && currentDayHours.rows.length > 0){
+        if (currentDayHours && currentDayHours.rows.length > 0) {
             todayHours = currentDayHours.rows[0].sum
         }
         if (!result || result.rows.length <= 0) {
@@ -25,7 +28,7 @@ export const getDashboard = async (req, res) => {
         }
 
         const totalHours = result.rows[0].sum || 0;
-        res.render('layouts/main', { title: 'Dashboard', duration: totalHours, currentDayHours: todayHours, contentFile: '../dashboard/dashboard' });
+        res.render('layouts/main', { title: 'Dashboard', duration: totalHours, currentDayHours: todayHours, showSidebar: true, contentFile: '../dashboard/dashboard' });
     } catch (error) {
         console.error('Error is ', error);
         res.status(500).send('Internal Server error');

@@ -10,12 +10,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "knex migrate:latest --knexfile knexfile.mjs",
     "rollback": "knex migrate:rollback --knexfile knexfile.mjs"
-
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "connect-pg-simple": "^10.0.0",
     "ejs": "^3.1.10",
+    "express-session": "^1.18.1",
     "knex": "^3.1.0",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.4",
