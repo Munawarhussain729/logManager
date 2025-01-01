@@ -23,8 +23,6 @@ export const getLogin = async (req, res) => {
 export const postLogin = async (req, res) => {
     let client;
     try {
-        console.log("DB confi ", dbConfig);
-        
         const { email, password } = req.body;
         client = await pool.connect(); // Connect to the database
 
