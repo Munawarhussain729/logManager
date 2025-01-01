@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <!-- <link href='https://unpkg.com/fullcalendar@5.10.1/main.min.css' rel='stylesheet' /> -->
+    <link href="/css/dashboard.css" rel="stylesheet">
+    <style>
+        .datepicker.datepicker-inline {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="body">
+            <h1>Welcome to the <%= title %>
+            </h1>
+            <div class="flex-container">
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Today's Hours</p>
+                    <p class="boldText" id="daily-hours"><%= currentDayHours %> hours</p>
+                </div>
+                <div>
+                    <p style="margin-top: 10px; margin-bottom: 10px;">Time logged in July 2024</p>
+                    <p class="boldText">
+                        <%= duration %> hours
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

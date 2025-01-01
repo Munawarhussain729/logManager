@@ -1,0 +1,120 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+*.lcov
+
+# Build directories
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Optional REPL history
+.node_repl_history
+
+# IDE/Editor specific files
+
+# VS Code
+.vscode/
+.history/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains IDEs (IntelliJ IDEA, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Other
+*.swp
+*.lock
+*.lock.*
+*.*~
+
+# Local environment specific files
+.envrc
+direnv
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
+.docker/
+
+# PIDs
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Bower
+bower_components/
+
+# Yarn
+.yarn/*
+.pnp.*
+.pnp.js
+.pnp.cjs
+.yarn-integrity
+
+# Project files specific to distros
+.config/
+.project
+.tern-port
+
+# Python Virtual Environment
+.venv/
+venv/
+
+# Other build tools and caches
+.parcel-cache/
+.rpt2_cache/
+.sass-cache/
+.cache/
+.next/
+.nuxt/
+out/
+
+# TypeScript Declaration files
+*.d.ts
