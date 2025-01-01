@@ -17,6 +17,7 @@ export const getDailyLogs = async (req, res) => {
                 contentFile: '../dailyLogs/dailyLogs',
                 logs: allLogs,
                 projects: allProjects,
+                showSidebar: true,
                 roles: allRoles,
                 loggedInUserId: USER_ID
             });
@@ -30,21 +31,11 @@ export const getDailyLogs = async (req, res) => {
 export const postDailyLog = async (req, res) => {
     try {
         const { created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role } = req.body
-        createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
+        await createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
         const allLogs = await fetchAllLogs()
         const allProjects = await fetchAllProjects()
         const allRoles = await fetchAllRoles()
-        console.log("All logs are ", allLogs);
-        res.json(allLogs); 
-        // res.render('layouts/main',
-        //     {
-        //         title: 'Daily Logs',
-        //         contentFile: '../dailyLogs/dailyLogs',
-        //         logs: allLogs,
-        //         projects: allProjects,
-        //         roles: allRoles,
-        //         loggedInUserId: USER_ID
-        //     });
+        res.json(allLogs);
     } catch (error) {
         console.error('Daily logs post error ', error)
         res.status(500).send('Internal Server Error')
@@ -55,7 +46,6 @@ export const getLogDetail = async (req, res) => {
     let client
     try {
         const logId = req.params?.id
-        console.log('Log id ', logId)
         if (!logId) {
             res.statusCode(400).send('Log id not found')
             return
@@ -108,7 +98,7 @@ export const updateDailyLog = async (req, res) => {
         }
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.log('Log update error', error);
+        console.error('Log update error', error);
         res.status(500).json({ error: 'Internal server error' });
     } finally {
         if (client) {

@@ -6,9 +6,9 @@ const { Pool } = pg;
 const pool = new Pool(dbConfig);
 
 export const getDashboard = async (req, res) => {
-    // if (!req.session.user) {
-    //     return res.redirect('/login'); // Redirect if not logged in
-    // }
+    if (!req.session.user) {
+        return res.redirect('/login'); // Redirect if not logged in
+    }
     let client = await pool.connect();
     try {
         const date = new Date();
@@ -17,7 +17,6 @@ export const getDashboard = async (req, res) => {
         const result = await client.query(`SELECT SUM(duration) FROM logs WHERE user_id = $1`, ["91a2ed64-e083-4405-a09f-a26aec56927d"]);
         const currentDayHours = await client.query(`SELECT SUM(duration) FROM logs WHERE user_id = $1 AND created_on = $2`, ["91a2ed64-e083-4405-a09f-a26aec56927d", formattedDate]);
         // const currentDayHours = await client.query(`SELECT SUM(duration) FROM logs WHERE user_id = $1 AND created_on = $2`, ["91a2ed64-e083-4405-a09f-a26aec56927d", formattedDate]);
-        console.log("Current day houts ", currentDayHours.rows)
         let todayHours = 0
         if (currentDayHours && currentDayHours.rows.length > 0) {
             todayHours = currentDayHours.rows[0].sum

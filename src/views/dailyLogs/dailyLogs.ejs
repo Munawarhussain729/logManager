@@ -102,8 +102,6 @@
         })
         .then(response => response.json())
         .then(updatedLogs => {
-            console.log("Form submitted successfully:", updatedLogs);
-
             // Update the table rows dynamically
             logsTableBody.innerHTML = ''; // Clear existing logs
 

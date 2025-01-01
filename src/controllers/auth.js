@@ -24,15 +24,10 @@ export const postLogin = async (req, res) => {
     let client;
     try {
         const { email, password } = req.body;
-        console.log("email is ", email);
-        console.log("password is ", password);
         client = await pool.connect(); // Connect to the database
 
-        // Use parameterized query to safely handle input
         const query = 'SELECT * FROM users WHERE email = $1';
         const results = await client.query(query, [email]);
-
-        console.log("query result ", results.rows);
 
         if (results.rows.length === 0) {
             return res.status(401).send('Invalid email or password');
@@ -42,10 +37,7 @@ export const postLogin = async (req, res) => {
         if (user.password !== password) {
             return res.status(401).send('Invalid password for the email');
         }
-        console.log("Users ", user);
-
         req.session.user = { id: user.id, email: user.email, name: user.name };
-
         res.redirect('/dashboard');
     } catch (error) {
         console.error('Login loog error ', error)
