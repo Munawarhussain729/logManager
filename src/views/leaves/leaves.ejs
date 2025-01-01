@@ -1,3 +1,121 @@
 <div>
-    <p>Inide leavses logs</p>
+    <h1>Leaves</h1>
+    <form id="log-form" action="/daily-logs">
+        <div class="input-field-wrapper">
+            <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
+            <input type="hidden" name="id" value="" />
+
+            <textarea name="subject" class="log-text-area" rows="2" placeholder="Enter subject"></textarea>
+            <textarea name="body" class="log-text-area" rows="3" placeholder="Enter Leave details"></textarea>
+            <div>
+                <p>Select Start Date</p>
+                <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
+            </div>
+            <div>
+                <p>Select End Date</p>
+                <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
+            </div>
+            <button type="submit" class="add-log-button">Request Leave</button>
+        </div>
+
+    </form>
+    <table class="mt-5">
+        <thead aria-colcount="7">
+            <tr class="border">
+                <th class="p-3" style="width: 10%; min-width: 100px;">Sr #</th>
+                <th style="width: 10%; min-width: 100px;">Subject</th>
+                <th style="width: 30%; min-width: 100px;">Body</th>
+                <th style="width: 15%; min-width: 300px;">Start Date</th>
+                <th style="width: 15%; min-width: 300px;">End Date</th>
+                <th style="width: 20%; min-width: 100px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% logs.forEach(log=> { %>
+                <tr class="logs-table-row" data-id="<%= log.id %>">
+                    <td>
+                        <%= new Date(log.created_on).toISOString().split('T')[0] %>
+                    </td>
+                    <td>
+                        <%= log.project_id %>
+                    </td>
+                    <td>
+                        <%= log.user_role %>
+                    </td>
+                    <td>
+                        <%= log.message %>
+                    </td>
+                    <td>
+                        <%= log.tomorrow_plan %>
+                    </td>
+                    <td>
+                        <%= log.blocker %>
+                    </td>
+                    <td>
+                        <%= log.duration %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById("log-form");
+        const submitButton = document.querySelector('.add-log-button');
+        const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const logId = document.querySelector('input[name="id"]').value;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            const method = logId ? "PATCH" : "POST";
+            const actionUrl = '/daily-logs';
+
+            fetch(actionUrl, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(updatedLogs => {
+                    // Update the table rows dynamically
+                    logsTableBody.innerHTML = ''; // Clear existing logs
+
+                    updatedLogs.forEach(log => {
+                        const row = document.createElement('tr');
+                        row.classList.add('logs-table-row');
+                        row.setAttribute('data-id', log.id);
+
+                        row.innerHTML = `
+                    <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
+                    <td>${log.project_id}</td>
+                    <td>${log.user_role}</td>
+                    <td>${log.message}</td>
+                    <td>${log.tomorrow_plan}</td>
+                    <td>${log.blocker}</td>
+                    <td>${log.duration}</td>
+                `;
+
+                        logsTableBody.appendChild(row);
+                    });
+
+                    // Optionally, reset the form after submission
+                    form.reset();
+                })
+                .catch(error => {
+                    console.error("Error submitting form:", error);
+                });
+        });
+    });
+
+</script>
