@@ -47,7 +47,7 @@ app.use('/', dailyLogRouter);
 
 // Example Root Route
 app.get('/', (req, res) => {
-    return res.send('Hey');
+    return res.send('Page not found ');
 });
 
 // Error Handling Middleware

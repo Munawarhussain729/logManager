@@ -1,11 +1,12 @@
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 const dbConfig = {
-  user: 'log_manager',      // replace with your PostgreSQL username
-  host: 'localhost',         // or the address of your PostgreSQL server
-  database: 'log_manager_db',  // replace with your PostgreSQL database name
-  password: 'log_manager',  // replace with your PostgreSQL password
-  port: 5432,                // default PostgreSQL port
+  user: process.env.PG_USER,      
+  host: process.env.PG_HOST,         
+  database: process.env.PG_DATABASE, 
+  password: process.env.PG_PASSWORD, 
+  port: process.env.PG_PORT,              
 };
 
 
