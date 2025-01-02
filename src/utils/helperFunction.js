@@ -20,6 +20,24 @@ export const fetchAllLogs = async () => {
 
     }
 }
+export const fetchAllLeaves = async () => {
+    let client
+    try {
+        client = await pool.connect();
+        const result = await client.query('SELECT * FROM leaves ORDER BY "createdOn"');
+        console.log("result rows are ", result);
+        
+        return result.rows
+    } catch (error) {
+        console.error('Error fetching leaves ', error)
+        throw new Error('Failed to fetch leaves')
+    } finally {
+        if (client) {
+            client.release();
+        }
+
+    }
+}
 
 export const fetchAllProjects = async () => {
     let client
@@ -46,8 +64,8 @@ export const fetchAllRoles = async () => {
     } catch (error) {
         console.error('Error while fetching roles', error)
         throw new Error('Failed to fetch roles')
-    }finally{
-        if(client){
+    } finally {
+        if (client) {
             client.release()
         }
     }
@@ -78,21 +96,21 @@ export const createNewLog = async ({ created_on, message, blocker, duration, tom
     }
 };
 
-export const getTotalHours = async({user_id}) => {
+export const getTotalHours = async ({ user_id }) => {
     let client
     try {
         client = await pool.connect()
         const query = `SELECT SUM (duration) FROM logs WHERE user_id = ${user_id}`
         const result = await client.query(query)
-        if(result.rows?.length <= 0){
-            return 
+        if (result.rows?.length <= 0) {
+            return
         }
         return result.rows[0]
     } catch (error) {
         console.error('Error geting hours ', error)
         throw new Error('Failed to get hours')
-    }finally{
-        if(client){
+    } finally {
+        if (client) {
             client.release();
         }
     }

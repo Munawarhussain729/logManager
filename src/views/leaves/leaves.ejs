@@ -22,7 +22,7 @@
     <table class="mt-5">
         <thead aria-colcount="7">
             <tr class="border">
-                <th class="p-3" style="width: 10%; min-width: 100px;">Sr #</th>
+                <th class="p-3" style="width: 10%; min-width: 100px;">Sr # </th>
                 <th style="width: 10%; min-width: 100px;">Subject</th>
                 <th style="width: 30%; min-width: 100px;">Body</th>
                 <th style="width: 15%; min-width: 300px;">Start Date</th>
@@ -31,28 +31,25 @@
             </tr>
         </thead>
         <tbody>
-            <% logs.forEach(log=> { %>
-                <tr class="logs-table-row" data-id="<%= log.id %>">
+            <% leaves.forEach((leave, index)=> { %>
+                <tr class="leaves-table-row" data-id="<%= leave.id %>">
                     <td>
-                        <%= new Date(log.created_on).toISOString().split('T')[0] %>
+                        <%= index + 1 %> <
                     </td>
                     <td>
-                        <%= log.project_id %>
+                        <%= leave.subject %>
                     </td>
                     <td>
-                        <%= log.user_role %>
+                        <%= leave.body %>
                     </td>
                     <td>
-                        <%= log.message %>
+                        <%= new Date(leave.startDate).toISOString().split('T')[0] %>
                     </td>
                     <td>
-                        <%= log.tomorrow_plan %>
+                        <%= new Date(leave.endDate).toISOString().split('T')[0] %>
                     </td>
                     <td>
-                        <%= log.blocker %>
-                    </td>
-                    <td>
-                        <%= log.duration %>
+                        <%= leave.status %>
                     </td>
                 </tr>
                 <% }); %>
@@ -77,7 +74,7 @@
             });
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl = '/daily-logs';
+            const actionUrl = '/leaves';
 
             fetch(actionUrl, {
                 method: method,
@@ -87,23 +84,22 @@
                 body: JSON.stringify(data)
             })
                 .then(response => response.json())
-                .then(updatedLogs => {
+                .then(updatedLeaves => {
                     // Update the table rows dynamically
                     logsTableBody.innerHTML = ''; // Clear existing logs
 
-                    updatedLogs.forEach(log => {
+                    updatedLeaves.forEach(leave => {
                         const row = document.createElement('tr');
-                        row.classList.add('logs-table-row');
+                        row.classList.add('leaves-table-row');
                         row.setAttribute('data-id', log.id);
 
                         row.innerHTML = `
-                    <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
-                    <td>${log.project_id}</td>
-                    <td>${log.user_role}</td>
-                    <td>${log.message}</td>
-                    <td>${log.tomorrow_plan}</td>
-                    <td>${log.blocker}</td>
-                    <td>${log.duration}</td>
+                    <td>${index + 1}</td>
+                    <td>${leave.subject}</td>
+                    <td>${leave.body}</td>
+                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
+                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
+                    <td>${leave.status}</td>
                 `;
 
                         logsTableBody.appendChild(row);
