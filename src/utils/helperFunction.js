@@ -26,7 +26,7 @@ export const fetchAllLeaves = async () => {
         client = await pool.connect();
         const result = await client.query('SELECT * FROM leaves ORDER BY "createdOn"');
         console.log("result rows are ", result);
-        
+
         return result.rows
     } catch (error) {
         console.error('Error fetching leaves ', error)
@@ -89,6 +89,29 @@ export const createNewLog = async ({ created_on, message, blocker, duration, tom
     } catch (error) {
         console.error('Error inserting logs:', error);
         throw new Error('Failed to store logs');
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+};
+export const createNewLeave = async ({ userId, subject, body, startDate, endDate }) => {
+    let client;
+    try {
+        client = await pool.connect();
+
+        const query = `
+            INSERT INTO leaves ("userId", subject, body, "startDate", "endDate")
+            VALUES ($1, $2, $3, $4, $5)
+        `;
+
+        const values = [userId, subject, body, startDate, endDate];
+        const result = await client.query(query, values);
+
+        return result.rows
+    } catch (error) {
+        console.error('Error inserting leave:', error);
+        throw new Error('Failed to store leave');
     } finally {
         if (client) {
             client.release();

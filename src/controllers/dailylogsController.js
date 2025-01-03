@@ -33,8 +33,6 @@ export const postDailyLog = async (req, res) => {
         const { created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role } = req.body
         await createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
         const allLogs = await fetchAllLogs()
-        const allProjects = await fetchAllProjects()
-        const allRoles = await fetchAllRoles()
         res.json(allLogs);
     } catch (error) {
         console.error('Daily logs post error ', error)

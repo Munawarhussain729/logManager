@@ -1,19 +1,19 @@
 <div>
     <h1>Leaves</h1>
-    <form id="log-form" action="/daily-logs">
+    <form id="log-form" action="/leaves">
         <div class="input-field-wrapper">
-            <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
+            <input type="hidden" name="userId" value="<%= loggedInUserId %>" />
             <input type="hidden" name="id" value="" />
 
             <textarea name="subject" class="log-text-area" rows="2" placeholder="Enter subject"></textarea>
             <textarea name="body" class="log-text-area" rows="3" placeholder="Enter Leave details"></textarea>
             <div>
                 <p>Select Start Date</p>
-                <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
+                <input name="startDate" required placeholder="Date" type="date" class="daily-logs-input" />
             </div>
             <div>
                 <p>Select End Date</p>
-                <input name="created_on" required placeholder="Date" type="date" class="daily-logs-input" />
+                <input name="endDate" required placeholder="Date" type="date" class="daily-logs-input" />
             </div>
             <button type="submit" class="add-log-button">Request Leave</button>
         </div>
@@ -32,9 +32,9 @@
         </thead>
         <tbody>
             <% leaves.forEach((leave, index)=> { %>
-                <tr class="leaves-table-row" data-id="<%= leave.id %>">
+                <tr class="logs-table-row" data-id="<%= leave.id %>">
                     <td>
-                        <%= index + 1 %> <
+                        <%= index + 1 %> 
                     </td>
                     <td>
                         <%= leave.subject %>
@@ -85,13 +85,11 @@
             })
                 .then(response => response.json())
                 .then(updatedLeaves => {
-                    // Update the table rows dynamically
                     logsTableBody.innerHTML = ''; // Clear existing logs
-
-                    updatedLeaves.forEach(leave => {
+                    updatedLeaves.forEach((leave, index) => {
                         const row = document.createElement('tr');
-                        row.classList.add('leaves-table-row');
-                        row.setAttribute('data-id', log.id);
+                        row.classList.add('logs-table-row');
+                        row.setAttribute('data-id', leave.id);
 
                         row.innerHTML = `
                     <td>${index + 1}</td>
