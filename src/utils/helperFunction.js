@@ -25,8 +25,6 @@ export const fetchAllLeaves = async () => {
     try {
         client = await pool.connect();
         const result = await client.query('SELECT * FROM leaves ORDER BY "createdOn"');
-        console.log("result rows are ", result);
-
         return result.rows
     } catch (error) {
         console.error('Error fetching leaves ', error)

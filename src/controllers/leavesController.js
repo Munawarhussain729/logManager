@@ -29,8 +29,6 @@ export const postLeaves = async (req, res) => {
         const { userId, subject, body, startDate, endDate, createdOn, status } = req.body
         await createNewLeave({ userId, subject, body, startDate, endDate })
         const allLeaves = await fetchAllLeaves()
-        console.log("all leaves ", allLeaves);
-        
         res.json(allLeaves);
     } catch (error) {
         console.error('Daily leave post error ', error)
