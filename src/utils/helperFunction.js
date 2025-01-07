@@ -36,6 +36,22 @@ export const fetchAllLeaves = async () => {
 
     }
 }
+export const fetchAllWorkFromHome = async () => {
+    let client
+    try {
+        client = await pool.connect();
+        const result = await client.query('SELECT * FROM work_from_home ORDER BY "requestedAt"');
+        return result.rows
+    } catch (error) {
+        console.error('Error fetching leaves ', error)
+        throw new Error('Failed to fetch leaves')
+    } finally {
+        if (client) {
+            client.release();
+        }
+
+    }
+}
 
 export const fetchAllProjects = async () => {
     let client

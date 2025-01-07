@@ -1,6 +1,4 @@
-import { USER_ID } from "../../constants.js";
 import dbConfig from "../dbconfig.js";
-import { createNewLog, fetchAllLogs, fetchAllProjects, fetchAllRoles } from "../utils/helperFunction.js";
 import pg from "pg"
 
 const { Pool } = pg
