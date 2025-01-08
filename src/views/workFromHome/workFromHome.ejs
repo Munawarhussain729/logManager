@@ -1,3 +1,115 @@
 <div>
-    <p>Inide work from homw logs</p>
+    <h1>Work From Home</h1>
+    <form id="log-form" action="/work-from-home">
+        <div class="input-field-wrapper">
+            <input type="hidden" name="employeeId" value="<%= loggedInUserId %>" />
+            <input type="hidden" name="id" value="" />
+
+            <textarea name="subject" class="log-text-area" rows="2" placeholder="Enter subject"></textarea>
+            <textarea name="body" class="log-text-area" rows="3" placeholder="Enter Leave details"></textarea>
+            <div>
+                <p>Select Start Date</p>
+                <input name="startDate" required placeholder="Date" type="date" class="daily-logs-input" />
+            </div>
+            <div>
+                <p>Select End Date</p>
+                <input name="endDate" required placeholder="Date" type="date" class="daily-logs-input" />
+            </div>
+            <button type="submit" class="add-log-button">Request Leave</button>
+        </div>
+
+    </form>
+    <table class="mt-5">
+        <thead aria-colcount="7">
+            <tr class="border">
+                <th class="p-3" style="width: 10%; min-width: 100px;">Sr # </th>
+                <th style="width: 10%; min-width: 100px;">Subject</th>
+                <th style="width: 30%; min-width: 100px;">Body</th>
+                <th style="width: 15%; min-width: 300px;">Start Date</th>
+                <th style="width: 15%; min-width: 300px;">End Date</th>
+                <th style="width: 20%; min-width: 100px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% leaves.forEach((leave, index)=> { %>
+                <tr class="logs-table-row" data-id="<%= leave.id %>">
+                    <td>
+                        <%= index + 1 %>
+                    </td>
+                    <td>
+                        <%= leave.subject %>
+                    </td>
+                    <td>
+                        <%= leave.body %>
+                    </td>
+                    <td>
+                        <%= new Date(leave.startDate).toISOString().split('T')[0] %>
+                    </td>
+                    <td>
+                        <%= new Date(leave.endDate).toISOString().split('T')[0] %>
+                    </td>
+                    <td>
+                        <%= leave.status %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById("log-form");
+        const submitButton = document.querySelector('.add-log-button');
+        const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const logId = document.querySelector('input[name="id"]').value;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            const method = logId ? "PATCH" : "POST";
+            const actionUrl = '/work-from-home';
+
+            fetch(actionUrl, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(updatedLeaves => {
+                    logsTableBody.innerHTML = ''; // Clear existing logs
+                    updatedLeaves.forEach((leave, index) => {
+                        const row = document.createElement('tr');
+                        row.classList.add('logs-table-row');
+                        row.setAttribute('data-id', leave.id);
+
+                        row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${leave.subject}</td>
+                    <td>${leave.body}</td>
+                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
+                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
+                    <td>${leave.status}</td>
+                `;
+
+                        logsTableBody.appendChild(row);
+                    });
+
+                    // Optionally, reset the form after submission
+                    form.reset();
+                })
+                .catch(error => {
+                    console.error("Error submitting form:", error);
+                });
+        });
+    });
+
+</script>

@@ -62,12 +62,13 @@ p {
     justify-content: center;
     font-size: 60px;
 }
-.boldText{
+
+.boldText {
     font-size: 34px;
     font-weight: 600;
 }
 
-.flex-container{
+.flex-container {
     display: flex;
     justify-content: space-between;
 }
@@ -83,20 +84,22 @@ p {
     font-weight: 700;
 }
 
-.sidebar-end{
+.sidebar-end {
     width: 200px;
     padding: 10px;
     border-radius: 25px;
     text-align: center;
-    background-color:#2c3e50 ;
+    background-color: #2c3e50;
     border: 1px solid #2c3e50;
     bottom: 10px;
     position: absolute;
 }
-.sidebar-end:hover{
+
+.sidebar-end:hover {
     border: 1px solid #ecf0f1;
     cursor: pointer;
 }
+
 .content {
     width: 100%;
     height: 100vh;
@@ -145,16 +148,21 @@ p {
     border: 1px solid #4e6d8b;
 }
 
-.logs-table-row{
+.add-log-button:hover {
+    cursor: pointer;
+    border: 1px solid white;
+}
+
+.logs-table-row {
     border: 1px groove snow;
     cursor: pointer;
 }
 
-.logs-table-row > td{
+.logs-table-row>td {
     padding: 5px;
 }
 
-.login-wrapper{
+.login-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
@@ -170,45 +178,45 @@ p {
     border-radius: 8px;
     overflow: hidden;
     padding: 20px;
-  }
-  
-  .login-box {
+}
+
+.login-box {
     text-align: center;
-  }
-  
-  h2 {
+}
+
+h2 {
     margin-bottom: 20px;
     font-size: 1.8rem;
     color: #333;
-  }
-  
-  .input-group {
+}
+
+.input-group {
     margin-bottom: 20px;
     text-align: left;
-  }
-  
-  label {
+}
+
+label {
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
     color: #555;
-  }
-  
-  input {
+}
+
+input {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     outline: none;
-  }
-  
-  input:focus {
+}
+
+input:focus {
     border-color: #007bff;
     box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
-  }
-  
-  .btn {
+}
+
+.btn {
     display: block;
     width: 100%;
     padding: 12px;
@@ -219,23 +227,23 @@ p {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
-  
-  .btn:hover {
+}
+
+.btn:hover {
     background-color: #0056b3;
-  }
-  
-  .register-link {
+}
+
+.register-link {
     margin-top: 10px;
     font-size: 0.9rem;
     color: #555;
-  }
-  
-  .register-link a {
+}
+
+.register-link a {
     color: #007bff;
     text-decoration: none;
-  }
-  
-  .register-link a:hover {
+}
+
+.register-link a:hover {
     text-decoration: underline;
-  }
+}

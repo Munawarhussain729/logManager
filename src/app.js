@@ -5,6 +5,8 @@ import { errorHandler, notFoundHandler } from './middlewares/errorHandlers.js';
 import dashboardRouter from './routes/dashboard.js';
 import authRouter from './routes/auth.js';
 import dailyLogRouter from './routes/dailyLogs.js';
+import leavesRouter from './routes/leaves.js';
+import workFromHome from './routes/workFromHome.js';
 import path from 'path';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
@@ -44,6 +46,8 @@ app.use(express.static(path.join(__dirname, 'views')));
 app.use('/', authRouter);
 app.use('/', dashboardRouter);
 app.use('/', dailyLogRouter);
+app.use('/', leavesRouter);
+app.use('/work-from-home', workFromHome);
 
 // Example Root Route
 app.get('/', (req, res) => {
