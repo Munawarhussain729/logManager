@@ -36,6 +36,22 @@ export const fetchAllLeaves = async () => {
 
     }
 }
+export const fetchAllWorkFromHome = async () => {
+    let client
+    try {
+        client = await pool.connect();
+        const result = await client.query('SELECT * FROM work_from_home ORDER BY "createdOn"');
+        return result.rows
+    } catch (error) {
+        console.error('Error fetching leaves ', error)
+        throw new Error('Failed to fetch leaves')
+    } finally {
+        if (client) {
+            client.release();
+        }
+
+    }
+}
 
 export const fetchAllProjects = async () => {
     let client
@@ -104,6 +120,30 @@ export const createNewLeave = async ({ userId, subject, body, startDate, endDate
         `;
 
         const values = [userId, subject, body, startDate, endDate];
+        const result = await client.query(query, values);
+
+        return result.rows
+    } catch (error) {
+        console.error('Error inserting leave:', error);
+        throw new Error('Failed to store leave');
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+};
+
+export const createNewWorkFromHome = async ({ employeeId, subject, body, startDate, endDate }) => {
+    let client;
+    try {
+        client = await pool.connect();
+
+        const query = `
+            INSERT INTO work_from_home ("employeeId", subject, body, "startDate", "endDate","user_id")
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `;
+
+        const values = [employeeId, subject, body, startDate, endDate, employeeId];
         const result = await client.query(query, values);
 
         return result.rows
