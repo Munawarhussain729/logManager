@@ -1,8 +1,8 @@
 <div>
     <h1>Work From Home</h1>
-    <form id="log-form" action="/leaves">
+    <form id="log-form" action="/work-from-home">
         <div class="input-field-wrapper">
-            <input type="hidden" name="userId" value="<%= loggedInUserId %>" />
+            <input type="hidden" name="employeeId" value="<%= loggedInUserId %>" />
             <input type="hidden" name="id" value="" />
 
             <textarea name="subject" class="log-text-area" rows="2" placeholder="Enter subject"></textarea>
@@ -34,7 +34,7 @@
             <% leaves.forEach((leave, index)=> { %>
                 <tr class="logs-table-row" data-id="<%= leave.id %>">
                     <td>
-                        <%= index + 1 %> 
+                        <%= index + 1 %>
                     </td>
                     <td>
                         <%= leave.subject %>
@@ -74,7 +74,7 @@
             });
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl = '/leaves';
+            const actionUrl = '/work-from-home';
 
             fetch(actionUrl, {
                 method: method,

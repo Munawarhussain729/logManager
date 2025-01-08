@@ -1,6 +1,6 @@
 import dbConfig from "../dbconfig.js";
 import pg from "pg"
-import { fetchAllWorkFromHome } from "../utils/helperFunction.js";
+import { createNewWorkFromHome, fetchAllWorkFromHome } from "../utils/helperFunction.js";
 import { USER_ID } from "../../constants.js";
 
 const { Pool } = pg
@@ -17,6 +17,18 @@ export const getAllWorkFromHome = async (req, res) => {
                 showSidebar: true,
                 loggedInUserId: USER_ID
             });
+    } catch (error) {
+        console.error('Daily loog error ', error)
+        res.status(500).send('Internal server error');
+    }
+
+}
+export const postWorkFromHome = async (req, res) => {
+    try {
+        const { employeeId, subject, body, startDate, endDate, createdOn, status } = req.body
+        await createNewWorkFromHome({ employeeId, subject, body, startDate, endDate })
+        const allLeaves = await fetchAllWorkFromHome()
+        res.json(allLeaves);
     } catch (error) {
         console.error('Daily loog error ', error)
         res.status(500).send('Internal server error');
