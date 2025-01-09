@@ -133,17 +133,17 @@ export const createNewLeave = async ({ userId, subject, body, startDate, endDate
     }
 };
 
-export const createNewWorkFromHome = async ({ employeeId, subject, body, startDate, endDate }) => {
+export const createNewWorkFromHome = async ({ userId, subject, body, startDate, endDate }) => {
     let client;
     try {
         client = await pool.connect();
 
         const query = `
-            INSERT INTO work_from_home ("employeeId", subject, body, "startDate", "endDate","user_id")
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO work_from_home ("user_id", subject, body, "startDate", "endDate")
+            VALUES ($1, $2, $3, $4, $5)
         `;
 
-        const values = [employeeId, subject, body, startDate, endDate, employeeId];
+        const values = [userId, subject, body, startDate, endDate];
         const result = await client.query(query, values);
 
         return result.rows
