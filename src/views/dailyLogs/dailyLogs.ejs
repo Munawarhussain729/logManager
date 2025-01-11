@@ -38,10 +38,11 @@
                 <th class="p-3" style="width: 10%; min-width: 100px;">Date</th>
                 <th style="width: 10%; min-width: 100px;">Project</th>
                 <th style="width: 10%; min-width: 100px;">Role</th>
-                <th style="width: 25%; min-width: 300px;">Description</th>
+                <th style="width: 30%; min-width: 300px;">Description</th>
                 <th style="width: 20%; min-width: 300px;">Tommorows's Plan</th>
                 <th style="width: 20%; min-width: 100px;">Important note</th>
                 <th style="width: 5%; min-width: 50px;">Hours</th>
+                <th style="width: 5%; min-width: 100px; text-align: center;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -68,6 +69,14 @@
                     <td>
                         <%= log.duration %>
                     </td>
+                    <td style="text-align: center;">
+                        <button class="edit-log-button" data-id="<%= log.id %>" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-log-button" data-id="<%= log.id %>" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
                 <% }); %>
         </tbody>
@@ -75,42 +84,42 @@
 </div>
 
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById("log-form");
-    const submitButton = document.querySelector('.add-log-button');
-    const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById("log-form");
+        const submitButton = document.querySelector('.add-log-button');
+        const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
 
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        const logId = document.querySelector('input[name="id"]').value;
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
+            const logId = document.querySelector('input[name="id"]').value;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
 
-        const method = logId ? "PATCH" : "POST";
-        const actionUrl = '/daily-logs';
+            const method = logId ? "PATCH" : "POST";
+            const actionUrl = '/daily-logs';
 
-        fetch(actionUrl, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(updatedLogs => {
-            // Update the table rows dynamically
-            logsTableBody.innerHTML = ''; // Clear existing logs
+            fetch(actionUrl, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(updatedLogs => {
+                    // Update the table rows dynamically
+                    logsTableBody.innerHTML = ''; // Clear existing logs
 
-            updatedLogs.forEach(log => {
-                const row = document.createElement('tr');
-                row.classList.add('logs-table-row');
-                row.setAttribute('data-id', log.id);
+                    updatedLogs.forEach(log => {
+                        const row = document.createElement('tr');
+                        row.classList.add('logs-table-row');
+                        row.setAttribute('data-id', log.id);
 
-                row.innerHTML = `
+                        row.innerHTML = `
                     <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
                     <td>${log.project_id}</td>
                     <td>${log.user_role}</td>
@@ -120,16 +129,16 @@
                     <td>${log.duration}</td>
                 `;
 
-                logsTableBody.appendChild(row);
-            });
+                        logsTableBody.appendChild(row);
+                    });
 
-            // Optionally, reset the form after submission
-            form.reset();
-        })
-        .catch(error => {
-            console.error("Error submitting form:", error);
+                    // Optionally, reset the form after submission
+                    form.reset();
+                })
+                .catch(error => {
+                    console.error("Error submitting form:", error);
+                });
         });
     });
-});
 
 </script>
