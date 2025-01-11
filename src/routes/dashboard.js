@@ -5,6 +5,6 @@ import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-router.get('/dashboard', authenticate, getDashboard);
+router.get('/', authenticate, getDashboard);
 
 export default router;

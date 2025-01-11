@@ -1,6 +1,6 @@
 <div>
     <h1>Daily Logs</h1>
-    <form id="log-form" action="/daily-logs">
+    <form id="log-form" action="/logs/daily-logs">
         <div class="input-field-wrapper">
             <input type="hidden" name="user_id" value="<%= loggedInUserId %>" />
             <input type="hidden" name="id" value="" />
@@ -132,7 +132,7 @@
             deleteButtons.forEach(button => {
                 button.addEventListener("click", function () {
                     const logId = this.getAttribute("data-id")
-                    fetch(`/daily-logs/${logId}`, {
+                    fetch(`/logs/daily-logs/${logId}`, {
                         method: "DELETE",
                         headers: {
                             'Content-Type': "application/json",
@@ -196,7 +196,7 @@
             });
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl = logId ? `/daily-logs/${logId}` : '/daily-logs';
+            const actionUrl = logId ? `/logs/daily-logs/${logId}` : '/logs/daily-logs';
 
             fetch(actionUrl, {
                 method: method,

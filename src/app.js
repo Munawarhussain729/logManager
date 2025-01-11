@@ -43,9 +43,9 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'views')));
 
 // Routes
-app.use('/', authRouter);
-app.use('/', dashboardRouter);
-app.use('/', dailyLogRouter);
+app.use('/auth', authRouter);
+app.use('/dashboard', dashboardRouter);
+app.use('/logs', dailyLogRouter);
 app.use('/', leavesRouter);
 app.use('/work-from-home', workFromHome);
 
