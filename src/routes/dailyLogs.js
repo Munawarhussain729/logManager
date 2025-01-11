@@ -7,6 +7,6 @@ const router = Router()
 router.get('/daily-logs', authenticate, getDailyLogs);
 router.get('/daily-logs/:id', authenticate, getLogDetail)
 router.post('/daily-logs', authenticate, postDailyLog);
-router.patch('/daily-logs', authenticate, updateDailyLog);
+router.patch('/daily-logs/:id', authenticate, updateDailyLog);
 
 export default router

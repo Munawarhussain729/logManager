@@ -29,7 +29,7 @@
             <textarea name="tomorrows_plan" class="log-text-area" rows="3"
                 placeholder="Enter tomorrows plan"></textarea>
             <textarea name="blocker" class="log-text-area" rows="3" placeholder="Enter any blockers"></textarea>
-            <button type="submit" class="add-log-button">Add Log</button>
+            <button type="submit" name="add-log-button" class="add-log-button">Add Log</button>
         </div>
     </form>
     <table>
@@ -70,10 +70,10 @@
                         <%= log.duration %>
                     </td>
                     <td style="text-align: center;">
-                        <button class="edit-log-button" data-id="<%= log.id %>" title="Edit">
+                        <button id="edit-log-button" class="edit-log-button" data-id="<%= log.id %>" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="delete-log-button" data-id="<%= log.id %>" title="Delete">
+                        <button id="delete-log-button" class="delete-log-button" data-id="<%= log.id %>" title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -88,6 +88,43 @@
         const form = document.getElementById("log-form");
         const submitButton = document.querySelector('.add-log-button');
         const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+        const editButton = document.getElementById("edit-log-button")
+
+        function addEventListeners() {
+            const editButtons = document.querySelectorAll('.edit-log-button');
+
+            editButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const logId = this.getAttribute("data-id");
+                    const row = this.closest('tr');
+                    const logData = {
+                        id: logId,
+                        created_on: row.children[0].textContent.trim(),
+                        project_id: row.children[1].textContent.trim(),
+                        user_role: row.children[2].textContent.trim(),
+                        message: row.children[3].textContent.trim(),
+                        tomorrows_plan: row.children[4].textContent.trim(),
+                        blocker: row.children[5].textContent.trim(),
+                        duration: row.children[6].textContent.trim(),
+                    };
+
+                    form.querySelector('input[name="id"]').value = logData.id;
+                    form.querySelector('input[name="created_on"]').value = logData.created_on;
+
+                    form.querySelector('select[name="project"]').value = logData.project_id;
+                    form.querySelector('select[name="user_role"]').value = logData.user_role;
+
+                    form.querySelector('textarea[name="message"]').value = logData.message;
+                    form.querySelector('textarea[name="tomorrows_plan"]').value = logData.tomorrows_plan;
+                    form.querySelector('textarea[name="blocker"]').value = logData.blocker;
+                    form.querySelector('input[name="duration"]').value = logData.duration;
+                    form.querySelector('input[name="duration"]').value = logData.duration;
+                    form.querySelector('button[name="add-log-button"]').textContent = "Update Log";
+                });
+
+            })
+        }
+        addEventListeners()
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -100,7 +137,7 @@
             });
 
             const method = logId ? "PATCH" : "POST";
-            const actionUrl = '/daily-logs';
+            const actionUrl = logId ? `/daily-logs/${logId}` : '/daily-logs';
 
             fetch(actionUrl, {
                 method: method,
@@ -127,13 +164,25 @@
                     <td>${log.tomorrow_plan}</td>
                     <td>${log.blocker}</td>
                     <td>${log.duration}</td>
+                     <td style="text-align: center;">
+                        <button id="edit-log-button" class="edit-log-button" data-id=${log.id} title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-log-button" class="delete-log-button" data-id=${log.id} title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 `;
 
                         logsTableBody.appendChild(row);
                     });
 
                     // Optionally, reset the form after submission
+                    addEventListeners();
+
+                    // Optionally, reset the form after submission
                     form.reset();
+                    form.querySelector('button[name="add-log-button"]').textContent = "Add Log";
                 })
                 .catch(error => {
                     console.error("Error submitting form:", error);
