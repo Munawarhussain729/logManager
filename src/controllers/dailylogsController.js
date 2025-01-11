@@ -39,6 +39,29 @@ export const postDailyLog = async (req, res) => {
         res.status(500).send('Internal Server Error')
     }
 }
+export const deleteDailyLog = async (req, res) => {
+    let client
+    try {
+        const logId = req.params?.id
+        if (!logId) {
+            res.statusCode(400).send('Log id not found')
+            return
+        }
+        client = await pool.connect()
+        const query = `DELETE FROM logs WHERE id = ${logId}`
+        const result = await client.query(query)
+        if (result.rowCount > 0) {
+            const allLogs = await fetchAllLogs(); 
+            res.json(allLogs);
+            return;
+        }
+
+        res.status(400).json({ error: 'Log deletion failed' });
+    } catch (error) {
+        console.error('Daily logs post error ', error)
+        res.status(500).send('Internal Server Error')
+    }
+}
 
 export const getLogDetail = async (req, res) => {
     let client

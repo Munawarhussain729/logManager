@@ -90,6 +90,64 @@
         const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
         const editButton = document.getElementById("edit-log-button")
 
+        function addAllLogs(updatedLogs) {
+            logsTableBody.innerHTML = ''; // Clear existing logs
+
+            updatedLogs?.forEach(log => {
+                const row = document.createElement('tr');
+                row.classList.add('logs-table-row');
+                row.setAttribute('data-id', log.id);
+
+                row.innerHTML = `
+                    <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
+                    <td>${log.project_id}</td>
+                    <td>${log.user_role}</td>
+                    <td>${log.message}</td>
+                    <td>${log.tomorrow_plan}</td>
+                    <td>${log.blocker}</td>
+                    <td>${log.duration}</td>
+                    <td style="text-align: center;">
+                        <button id="edit-log-button" class="edit-log-button" data-id=${log.id} title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-log-button" class="delete-log-button" data-id=${log.id} title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                    `;
+
+                logsTableBody.appendChild(row);
+            });
+
+            // Optionally, reset the form after submission
+            addEventListeners();
+            addDeleteEventListners()
+            // Optionally, reset the form after submission
+            form.reset();
+            form.querySelector('button[name="add-log-button"]').textContent = "Add Log";
+        }
+
+        function addDeleteEventListners() {
+            const deleteButtons = document.querySelectorAll(".delete-log-button")
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const logId = this.getAttribute("data-id")
+                    fetch(`/daily-logs/${logId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': "application/json",
+                        }
+                    }).then(response => response.json())
+                        .then(updatedLogs => {
+                            addAllLogs(updatedLogs)
+                        })
+                        .catch(error => {
+                            console.error("Error deleting log:", error);
+                        });
+                })
+            })
+        }
+
         function addEventListeners() {
             const editButtons = document.querySelectorAll('.edit-log-button');
 
@@ -125,6 +183,7 @@
             })
         }
         addEventListeners()
+        addDeleteEventListners()
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -148,41 +207,7 @@
             })
                 .then(response => response.json())
                 .then(updatedLogs => {
-                    // Update the table rows dynamically
-                    logsTableBody.innerHTML = ''; // Clear existing logs
-
-                    updatedLogs.forEach(log => {
-                        const row = document.createElement('tr');
-                        row.classList.add('logs-table-row');
-                        row.setAttribute('data-id', log.id);
-
-                        row.innerHTML = `
-                    <td>${new Date(log.created_on).toISOString().split('T')[0]}</td>
-                    <td>${log.project_id}</td>
-                    <td>${log.user_role}</td>
-                    <td>${log.message}</td>
-                    <td>${log.tomorrow_plan}</td>
-                    <td>${log.blocker}</td>
-                    <td>${log.duration}</td>
-                     <td style="text-align: center;">
-                        <button id="edit-log-button" class="edit-log-button" data-id=${log.id} title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button id="delete-log-button" class="delete-log-button" data-id=${log.id} title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-
-                        logsTableBody.appendChild(row);
-                    });
-
-                    // Optionally, reset the form after submission
-                    addEventListeners();
-
-                    // Optionally, reset the form after submission
-                    form.reset();
-                    form.querySelector('button[name="add-log-button"]').textContent = "Add Log";
+                    addAllLogs(updatedLogs)
                 })
                 .catch(error => {
                     console.error("Error submitting form:", error);
