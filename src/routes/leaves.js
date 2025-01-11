@@ -5,8 +5,8 @@ import { getAllLeaves, postLeaves } from "../controllers/leavesController.js";
 
 const router = Router()
 
-router.get('/leaves', authenticate, getAllLeaves);
-router.post('/leaves', authenticate, postLeaves);
+router.get('/', authenticate, getAllLeaves);
+router.post('/', authenticate, postLeaves);
 // router.get('/daily-logs/:id', authenticate, getLogDetail)
 // router.patch('/daily-logs', authenticate, updateDailyLog);
 

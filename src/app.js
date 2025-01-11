@@ -46,7 +46,7 @@ app.use(express.static(path.join(__dirname, 'views')));
 app.use('/auth', authRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/logs', dailyLogRouter);
-app.use('/', leavesRouter);
+app.use('/leaves', leavesRouter);
 app.use('/work-from-home', workFromHome);
 
 // Example Root Route
