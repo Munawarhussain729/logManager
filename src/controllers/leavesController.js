@@ -9,8 +9,6 @@ const pool = new Pool(dbConfig)
 export const getAllLeaves = async (req, res) => {
     try {
         const allLeaves = await fetchAllLeaves()
-        console.log("all leaves ", allLeaves);
-        
         res.render('layouts/main',
             {
                 title: 'Leaves',
@@ -81,13 +79,39 @@ export const getLeave = async (req, res) => {
         client = await pool.connect()
         const query = `SELECT * FROM Leaves WHERE id = ${leaveId}`
         const results = await client.query(query)
-        if (result.rows?.length > 0) {
-            res.status(200).send(result.rows[0])
+        if (results.rows?.length > 0) {
+            res.status(200).send(results.rows[0])
             return
         }
         res.status(400).send("Leave does not exists")
     } catch (error) {
         console.error('Leave get error ', error)
+        res.status(500).send('Internal Server Error')
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+}
+
+export const deleteLeave = async (req, res) => {
+    let client
+    try {
+        const leaveId = req.params?.id
+        if (!leaveId) {
+            res.statusCode(400).send("Leave id is missing")
+        }
+        client = await pool.connect()
+        const query = `DELETE FROM leaves WHERE id = ${leaveId}`
+        const results = await client.query(query)
+        if (results.rowCount > 0) {
+            const allLeaves = await fetchAllLeaves();
+            res.json(allLeaves);
+            return
+        }
+        res.status(400).send("Leave does not exists")
+    } catch (error) {
+        console.error('Leave delete error ', error)
         res.status(500).send('Internal Server Error')
     } finally {
         if (client) {

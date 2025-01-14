@@ -56,7 +56,7 @@
                         <button id="edit-log-button" class="edit-leave-button" data-id="<%= leave.id %>" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button id="delete-log-button" class="delete-log-button" data-id="<%= leave.id %>"
+                        <button id="delete-log-button" class="delete-leave-button" data-id="<%= leave.id %>"
                             title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -86,9 +86,6 @@
                         startDate: row.children[3].textContent.trim(),
                         endDate: row.children[4].textContent.trim(),
                     }
-
-                    console.log("Leave data is ", leaveData);
-
                     form.querySelector('input[name="id"]').value = leaveData.id;
                     form.querySelector('textarea[name="subject"]').value = leaveData.subject;
                     form.querySelector('textarea[name="body"]').value = leaveData.body;
@@ -96,9 +93,50 @@
                     form.querySelector('input[name="endDate"]').value = leaveData.endDate;
                 })
             })
-
             form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
+        }
+        function addEventListeners() {
+            const editButtons = document.querySelectorAll('.edit-leave-button')
+            editButtons?.forEach(button => {
+                button.addEventListener("click", function () {
+                    const leaveId = this.getAttribute("data-id")
+                    const row = this.closest("tr")
+                    const leaveData = {
+                        id: leaveId,
+                        subject: row.children[1].textContent.trim(),
+                        body: row.children[2].textContent.trim(),
+                        startDate: row.children[3].textContent.trim(),
+                        endDate: row.children[4].textContent.trim(),
+                    }
+                    form.querySelector('input[name="id"]').value = leaveData.id;
+                    form.querySelector('textarea[name="subject"]').value = leaveData.subject;
+                    form.querySelector('textarea[name="body"]').value = leaveData.body;
+                    form.querySelector('input[name="startDate"]').value = leaveData.startDate;
+                    form.querySelector('input[name="endDate"]').value = leaveData.endDate;
+                })
+            })
+            form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
+        }
 
+        function addDeleteEventListners() {
+            const deleteButtons = document.querySelectorAll(".delete-leave-button")
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const logId = this.getAttribute("data-id")
+                    fetch(`/leaves/${logId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': "application/json",
+                        }
+                    }).then(response => response.json())
+                        .then(updatedLeaves => {
+                            addAllLeaves(updatedLeaves)
+                        })
+                        .catch(error => {
+                            console.error("Error deleting log:", error);
+                        });
+                })
+            })
         }
 
         function addAllLeaves(updatedLeaves) {
@@ -130,11 +168,13 @@
 
             });
             addEventListeners()
+            addDeleteEventListners()
             form.reset()
             form.querySelector('button[name="add-leave-button"]').textContent = "Request Leave";
         }
 
         addEventListeners()
+        addDeleteEventListners()
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 
