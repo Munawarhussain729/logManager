@@ -15,7 +15,7 @@
                 <p>Select End Date</p>
                 <input name="endDate" required placeholder="Date" type="date" class="daily-logs-input" />
             </div>
-            <button type="submit" class="add-log-button">Request Leave</button>
+            <button type="submit" name="add-leave-button" class="add-log-button">Request Leave</button>
         </div>
 
     </form>
@@ -88,7 +88,7 @@
                     }
 
                     console.log("Leave data is ", leaveData);
-                    
+
                     form.querySelector('input[name="id"]').value = leaveData.id;
                     form.querySelector('textarea[name="subject"]').value = leaveData.subject;
                     form.querySelector('textarea[name="body"]').value = leaveData.body;
@@ -97,11 +97,13 @@
                 })
             })
 
+            form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
+
         }
 
         function addAllLeaves(updatedLeaves) {
             logsTableBody.innerHTML = ''; // Clear existing logs
-            updatedLeaves.forEach((leave, index) => {
+            updatedLeaves?.forEach((leave, index) => {
                 const row = document.createElement('tr');
                 row.classList.add('logs-table-row');
                 row.setAttribute('data-id', leave.id);
@@ -113,10 +115,23 @@
                     <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
                     <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
                     <td>${leave.status}</td>
+                      <td style="text-align: center;">
+                        <button id="edit-log-button" class="edit-leave-button" data-id=${leave.id} title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-log-button" class="delete-log-button" data-id=${leave.id}
+                            title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 `;
 
                 logsTableBody.appendChild(row);
+
             });
+            addEventListeners()
+            form.reset()
+            form.querySelector('button[name="add-leave-button"]').textContent = "Request Leave";
         }
 
         addEventListeners()
