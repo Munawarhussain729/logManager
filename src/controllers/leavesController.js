@@ -35,3 +35,24 @@ export const postLeaves = async (req, res) => {
         res.status(500).send('Internal Server Error')
     }
 }
+
+export const getLeave = async (req, res) => {
+    let client
+    try {
+        const leaveId = req.params?.id
+        if (!leaveId) {
+            res.statusCode(400).send("Leave id is missing")
+        }
+        client = await pool.connect()
+        const query = `SELECT * FROM Leaves WHERE id = ${leaveId}`
+        const results = await client.query(query)
+        if (result.rows?.length > 0) {
+            res.status(200).send(result.rows[0])
+            return
+        }
+        res.status(400).send("Leave does not exists")
+    } catch (error) {
+        console.error('Leave get error ', error)
+        res.status(500).send('Internal Server Error')
+    }
+}
