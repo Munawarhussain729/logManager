@@ -115,7 +115,7 @@ export const createNewLeave = async ({ userId, subject, body, startDate, endDate
         client = await pool.connect();
 
         const query = `
-            INSERT INTO leaves ("userId", subject, body, "startDate", "endDate")
+            INSERT INTO leaves (user_id, subject, body, "startDate", "endDate")
             VALUES ($1, $2, $3, $4, $5)
         `;
 

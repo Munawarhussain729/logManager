@@ -22,6 +22,7 @@ export const postLogin = async (req, res) => {
     let client;
     try {
         const { email, password } = req.body;
+        
         client = await pool.connect(); // Connect to the database
 
         const query = 'SELECT * FROM users WHERE email = $1';

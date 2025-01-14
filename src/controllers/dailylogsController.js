@@ -68,7 +68,7 @@ export const getLogDetail = async (req, res) => {
     try {
         const logId = req.params?.id
         if (!logId) {
-            res.statusCode(400).send('Log id not found')
+            res.statusCode(400).send('Log id is missing')
             return
         }
         client = await pool.connect()
@@ -78,7 +78,7 @@ export const getLogDetail = async (req, res) => {
             res.status(200).send(results.rows[0])
             return
         }
-        res.status(400).send('Log id not found')
+        res.status(400).send('Log does not exists')
         return
     } catch (error) {
         console.error('Log detail get error ', error)
