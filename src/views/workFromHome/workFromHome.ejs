@@ -27,7 +27,8 @@
                 <th style="width: 30%; min-width: 100px;">Body</th>
                 <th style="width: 15%; min-width: 300px;">Start Date</th>
                 <th style="width: 15%; min-width: 300px;">End Date</th>
-                <th style="width: 20%; min-width: 100px;">Status</th>
+                <th style="width: 10%; min-width: 100px;">Status</th>
+                <th style="width: 10%; min-width: 100px; text-align: center;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -51,6 +52,15 @@
                     <td>
                         <%= leave.status %>
                     </td>
+                    <td style="text-align: center;">
+                        <button id="edit-log-button" class="edit-leave-button" data-id="<%= leave.id %>" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-log-button" class="delete-leave-button" data-id="<%= leave.id %>"
+                            title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
                 <% }); %>
         </tbody>
@@ -62,6 +72,36 @@
         const form = document.getElementById("log-form");
         const submitButton = document.querySelector('.add-log-button');
         const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+
+        function allLeaves(updatedLeaves) {
+            logsTableBody.innerHTML = ''; // Clear existing logs
+            updatedLeaves.forEach((leave, index) => {
+                const row = document.createElement('tr');
+                row.classList.add('logs-table-row');
+                row.setAttribute('data-id', leave.id);
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${leave.subject}</td>
+                    <td>${leave.body}</td>
+                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
+                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
+                    <td>${leave.status}</td>
+                     <td style="text-align: center;">
+                        <button id="edit-log-button" class="edit-leave-button" data-id=${leave.id} title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-log-button" class="delete-leave-button" data-id=${leave.id}
+                            title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                logsTableBody.appendChild(row);
+            });
+
+        }
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
@@ -85,24 +125,7 @@
             })
                 .then(response => response.json())
                 .then(updatedLeaves => {
-                    logsTableBody.innerHTML = ''; // Clear existing logs
-                    updatedLeaves.forEach((leave, index) => {
-                        const row = document.createElement('tr');
-                        row.classList.add('logs-table-row');
-                        row.setAttribute('data-id', leave.id);
-
-                        row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${leave.subject}</td>
-                    <td>${leave.body}</td>
-                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
-                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
-                    <td>${leave.status}</td>
-                `;
-
-                        logsTableBody.appendChild(row);
-                    });
-
+                    allLeaves(updatedLeaves)
                     // Optionally, reset the form after submission
                     form.reset();
                 })
