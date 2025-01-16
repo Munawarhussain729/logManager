@@ -15,7 +15,7 @@
                 <p>Select End Date</p>
                 <input name="endDate" required placeholder="Date" type="date" class="daily-logs-input" />
             </div>
-            <button type="submit" class="add-log-button">Request Leave</button>
+            <button type="submit" name="request-leave-button" class="add-log-button">Request Leave</button>
         </div>
 
     </form>
@@ -100,8 +100,56 @@
 
                 logsTableBody.appendChild(row);
             });
-
+            addEditListiners()
+            form.reset()
+            form.querySelector('button[name="request-leave-button"]').textContent = "Request leave"
         }
+
+        function addEditListiners() {
+            const editButtons = document.querySelectorAll(".edit-leave-button")
+            editButtons.forEach(editButton => {
+                editButton.addEventListener("click", function () {
+                    const leaveId = this.getAttribute("data-id")
+                    const row = this.closest("tr")
+                    const leaveData = {
+                        id: leaveId,
+                        subject: row.children[1].textContent.trim(),
+                        body: row.children[2].textContent.trim(),
+                        startDate: row.children[3].textContent.trim(),
+                        endDate: row.children[4].textContent.trim()
+                    }
+
+                    console.log("Leave data ", leaveData);
+                    form.querySelector('input[name="id"]').value == leaveData.id
+                    form.querySelector('textarea[name="subject"]').value == leaveData.subject
+                    form.querySelector('textarea[name="body"]').value = leaveData.body
+                    form.querySelector('input[name="startDate"]').value = leaveData.startDate
+                    form.querySelector('input[name="endDate"]').value = leaveData.endDate
+                })
+            })
+            form.querySelector('button[name="request-leave-button"]').textContent = "Update request"
+        }
+
+        function addDeleteEventListners() {
+            const deleteButtons = document.querySelectorAll(".delete-log-button")
+            deleteButtons.forEach(deleteButton => {
+                deleteButton.addEventListener("click", function () {
+                    const leaveId = this.getAttribute("data-id")
+                    fetch(`/leaves/${leaveId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        }
+                    }).then(response => response.json())
+                        .then(updatedLeaves => {
+                            allLeaves(updatedLeaves)
+                        }).catch(error => {
+                            console.error("Error deleting leave", error)
+                        })
+                })
+            })
+        }
+        addEditListiners()
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
