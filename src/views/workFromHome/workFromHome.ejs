@@ -135,7 +135,9 @@
             deleteButtons.forEach(deleteButton => {
                 deleteButton.addEventListener("click", function () {
                     const leaveId = this.getAttribute("data-id")
-                    fetch(`/leaves/${leaveId}`, {
+                    console.log("Leav id here ", leaveId);
+
+                    fetch(`/work-from-home/${leaveId}`, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json",
@@ -150,7 +152,7 @@
             })
         }
         addEditListiners()
-
+        addDeleteEventListners()
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 

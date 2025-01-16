@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middlewares/authMiddleware.js";
-import { getAllWorkFromHome, getLeave, postWorkFromHome } from "../controllers/workFromHomeController.js";
+import { deleteLeave, getAllWorkFromHome, getLeave, postWorkFromHome } from "../controllers/workFromHomeController.js";
+import { updateLeave } from "../controllers/leavesController.js";
 
 
 const router = Router()
