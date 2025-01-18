@@ -60,12 +60,10 @@ export const getLeave = async (req, res) => {
         }
     }
 }
-export const deleteLeave = async (req, res) => {
+export const deleteWorkFromHome = async (req, res) => {
     let client
 
     const leaveId = req.params?.id
-    console.log("Leave id ", leaveId);
-
     try {
         if (!leaveId) {
             res.statusCode(400).send("Leave id is missing")
@@ -74,7 +72,7 @@ export const deleteLeave = async (req, res) => {
         const query = `DELETE FROM work_from_home WHERE id = ${leaveId}`
         const results = await client.query(query)
         if (results.rowCount > 0) {
-            const allLeaves = await fetchAllLeaves();
+            const allLeaves = await fetchAllWorkFromHome();
             res.json(allLeaves);
             return
         }
