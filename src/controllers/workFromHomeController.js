@@ -65,7 +65,7 @@ export const deleteLeave = async (req, res) => {
 
     const leaveId = req.params?.id
     console.log("Leave id ", leaveId);
-    
+
     try {
         if (!leaveId) {
             res.statusCode(400).send("Leave id is missing")
@@ -89,7 +89,7 @@ export const deleteLeave = async (req, res) => {
     }
 }
 
-export const updateLeave = async (req, res) => {
+export const updateWorkFromHome = async (req, res) => {
     let client;
     try {
         const { id, userId, subject, body, startDate, endDate, createdOn, status } = req.body
@@ -103,14 +103,14 @@ export const updateLeave = async (req, res) => {
         "endDate" = $5
         WHERE id = $6
         RETURNING *`
-        const values = [userId, subject, body, startDate, endDate, id]
+        const values = [userId, subject, body, startDate, endDate, parseInt(id, 10)];
         client = await pool.connect()
         const result = await client.query(query, values)
 
         if (result.rowCount === 0) {
             return res.status(400).send("leave does not updated.")
         }
-        const allLeaves = await fetchAllLeaves()
+        const allLeaves = await fetchAllWorkFromHome()
         res.json(allLeaves)
     } catch (error) {
         console.error('Daily leave post error ', error)
