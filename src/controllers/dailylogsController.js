@@ -8,9 +8,20 @@ const pool = new Pool(dbConfig)
 
 export const getDailyLogs = async (req, res) => {
     try {
-        const allLogs = await fetchAllLogs()
-        const allProjects = await fetchAllProjects()
-        const allRoles = await fetchAllRoles()
+        const { user } = req.session;
+        console.log("user is ", user);
+
+        if (!user.id) {
+            res.status(404).send('No user found. Please login again');
+            return
+        }
+
+        const [allLogs, allProjects, allRoles] = await Promise.all([
+            fetchAllLogs(),
+            fetchAllProjects(),
+            fetchAllRoles()
+        ]);
+
         res.render('layouts/main',
             {
                 title: 'Daily Logs',
@@ -19,7 +30,7 @@ export const getDailyLogs = async (req, res) => {
                 projects: allProjects,
                 showSidebar: true,
                 roles: allRoles,
-                loggedInUserId: USER_ID
+                loggedInUserId: user.id
             });
     } catch (error) {
         console.error('Daily loog error ', error)
@@ -30,8 +41,14 @@ export const getDailyLogs = async (req, res) => {
 
 export const postDailyLog = async (req, res) => {
     try {
-        const { created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role } = req.body
-        await createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id, user_role })
+        const { user } = req.session;
+        if (!user.id) {
+            res.status(404).send('No user found. Please login again');
+            return
+        }
+
+        const { created_on, message, blocker, duration, tomorrows_plan, project, user_role } = req.body
+        await createNewLog({ created_on, message, blocker, duration, tomorrows_plan, project, user_id: user.id, user_role })
         const allLogs = await fetchAllLogs()
         res.json(allLogs);
     } catch (error) {
@@ -43,22 +60,28 @@ export const deleteDailyLog = async (req, res) => {
     let client
     try {
         const logId = req.params?.id
+        const { user } = req.session;
+        if (!user.id) {
+            res.status(404).send('No user found. Please login again');
+            return
+        }
         if (!logId) {
             res.statusCode(400).send('Log id not found')
             return
         }
         client = await pool.connect()
-        const query = `DELETE FROM logs WHERE id = ${logId}`
-        const result = await client.query(query)
+        const query = `DELETE FROM logs WHERE id = $1 AND user_id = $2`;
+        const result = await client.query(query, [logId, user.id]);
+
         if (result.rowCount > 0) {
-            const allLogs = await fetchAllLogs(); 
+            const allLogs = await fetchAllLogs();
             res.json(allLogs);
             return;
         }
 
         res.status(400).json({ error: 'Log deletion failed' });
     } catch (error) {
-        console.error('Daily logs post error ', error)
+        console.error('Daily delete post error ', error)
         res.status(500).send('Internal Server Error')
     }
 }
@@ -67,12 +90,17 @@ export const getLogDetail = async (req, res) => {
     let client
     try {
         const logId = req.params?.id
+        const { user } = req.session;
+        if (!user.id) {
+            res.statusCode(404).send('No user found. Please login again');
+        }
+
         if (!logId) {
             res.statusCode(400).send('Log id is missing')
             return
         }
         client = await pool.connect()
-        const query = `SELECT * FROM logs WHERE id = ${logId}`
+        const query = `SELECT * FROM logs WHERE id = ${logId} AND user_id = ${user.id}`
         const results = await client.query(query)
         if (results.rows?.length > 0) {
             res.status(200).send(results.rows[0])
@@ -92,7 +120,12 @@ export const getLogDetail = async (req, res) => {
 export const updateDailyLog = async (req, res) => {
     let client;
     try {
-        const { id, message, blocker, duration, tomorrows_plan, project, user_id, user_role } = req.body;
+        const { user } = req.session;
+        if (!user.id) {
+            res.statusCode(404).send('No user found. Please login again');
+        }
+
+        const { id, message, blocker, duration, tomorrows_plan, project, user_role } = req.body;
         if (!id) {
             return res.status(400).json({ error: 'Log ID is required' });
         }
@@ -110,7 +143,7 @@ export const updateDailyLog = async (req, res) => {
             WHERE id = $8
             RETURNING *`;
 
-        const values = [message, blocker, duration, tomorrows_plan, project, user_id, user_role, id];
+        const values = [message, blocker, duration, tomorrows_plan, project, user.id, user_role, id];
 
         const result = await client.query(query, values);
 
