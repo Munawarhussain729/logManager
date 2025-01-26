@@ -46,28 +46,43 @@ export const getDailyLogs = async (req, res) => {
 
 // Controller to create a new daily log
 export const postDailyLog = async (req, res) => {
+    let logs = [];
+
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
-
         const { created_on, message, blocker, duration, tomorrows_plan, project, user_role } = req.body;
-
+        if (!created_on) {
+            throw { status: 400, message: "Creation date is required" };
+        }
+        if (duration !== undefined && isNaN(Number(duration))) {
+            throw { status: 400, message: "Duration must be a valid number" };
+        }
         await createNewLog({
             created_on,
-            message,
-            blocker,
-            duration,
-            tomorrows_plan,
-            project,
+            message: message || null,
+            blocker: blocker || null,
+            duration: duration ? parseInt(duration, 10) : null,
+            tomorrows_plan: tomorrows_plan || null,
+            project: project || null,
             user_id: user.id,
-            user_role
+            user_role: user_role || null
         });
-
-        const allLogs = await fetchAllLogs({ user_id: user.id });
-        res.json(allLogs);
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.json(logs);
     } catch (error) {
-        console.error('Error creating daily log:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error creating daily log:", error);
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error("Error fetching logs after failure:", fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || "Internal server error",
+            logs: logs || []
+        });
     }
 };
 
