@@ -21,9 +21,10 @@ export const getDailyLogs = async (req, res) => {
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
+        console.log("Login user is ", user);
 
         const [allLogs, allProjects, allRoles] = await Promise.all([
-            fetchAllLogs(),
+            fetchAllLogs({ user_id: user.id }),
             fetchAllProjects(),
             fetchAllRoles()
         ]);
@@ -45,87 +46,121 @@ export const getDailyLogs = async (req, res) => {
 
 // Controller to create a new daily log
 export const postDailyLog = async (req, res) => {
+    let logs = [];
+
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
-
         const { created_on, message, blocker, duration, tomorrows_plan, project, user_role } = req.body;
-
+        if (!created_on) {
+            throw { status: 400, message: "Creation date is required" };
+        }
+        if (duration !== undefined && Number.isNaN(Number(duration))) {
+            throw { status: 400, message: "Duration must be a valid number" };
+        }
         await createNewLog({
             created_on,
-            message,
-            blocker,
-            duration,
-            tomorrows_plan,
-            project,
+            message: message || null,
+            blocker: blocker || null,
+            duration: duration ? Number.parseInt(duration, 10) : null,
+            tomorrows_plan: tomorrows_plan || null,
+            project: project || null,
             user_id: user.id,
-            user_role
+            user_role: user_role || null
         });
-
-        const allLogs = await fetchAllLogs();
-        res.json(allLogs);
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.json(logs);
     } catch (error) {
-        console.error('Error creating daily log:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error creating daily log:", error);
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error("Error fetching logs after failure:", fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || "Internal server error",
+            logs: logs || []
+        });
     }
 };
 
-// Controller to delete a daily log
 export const deleteDailyLog = async (req, res) => {
     let client;
+    let logs = [];
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
-
         const logId = req.params?.id;
         if (!logId) {
-            return res.status(400).send('Log ID is required');
+            throw { status: 400, message: 'Log ID is required' };
         }
-
         client = await pool.connect();
-
-        const query = `DELETE FROM logs WHERE id = $1 AND user_id = $2`;
+        const query = 'DELETE FROM logs WHERE id = $1 AND user_id = $2';
         const result = await client.query(query, [logId, user.id]);
-
-        if (result.rowCount > 0) {
-            const allLogs = await fetchAllLogs();
-            res.json(allLogs);
-        } else {
-            res.status(404).json({ error: 'Log not found or deletion failed' });
+        if (result.rowCount === 0) {
+            throw { status: 404, message: 'Log not found or deletion failed' };
         }
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.json(logs);
     } catch (error) {
         console.error('Error deleting daily log:', error);
-        res.status(500).send('Internal server error');
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error('Error fetching logs after failure:', fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || 'Internal server error',
+            logs: logs || []
+        });
     } finally {
         if (client) client.release();
     }
 };
 
+
 // Controller to fetch a single log detail
 export const getLogDetail = async (req, res) => {
     let client;
+    let logs = [];
+
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
 
         const logId = req.params?.id;
         if (!logId) {
-            return res.status(400).send('Log ID is required');
+            throw { status: 400, message: 'Log ID is required' };
         }
 
         client = await pool.connect();
 
-        const query = `SELECT * FROM logs WHERE id = $1 AND user_id = $2`;
+        const query = "SELECT * FROM logs WHERE id = $1 AND user_id = $2";
         const result = await client.query(query, [logId, user.id]);
 
-        if (result.rows?.length > 0) {
-            res.status(200).json(result.rows[0]);
-        } else {
-            res.status(404).send('Log not found');
+        if (result.rows?.length === 0) {
+            throw { status: 404, message: 'Log not found' };
         }
+
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.status(200).json({ log: result.rows[0], logs });
     } catch (error) {
         console.error('Error fetching log details:', error);
-        res.status(500).send('Internal server error');
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error('Error fetching logs after failure:', fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || 'Internal server error',
+            logs: logs || []
+        });
     } finally {
         if (client) client.release();
     }
@@ -134,6 +169,7 @@ export const getLogDetail = async (req, res) => {
 // Controller to update a daily log
 export const updateDailyLog = async (req, res) => {
     let client;
+    let logs = []
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
@@ -141,7 +177,10 @@ export const updateDailyLog = async (req, res) => {
         const { id, message, blocker, duration, tomorrows_plan, project, user_role } = req.body;
 
         if (!id) {
-            return res.status(400).json({ error: 'Log ID is required' });
+            throw { status: 400, message: "Valid Log Id is required" }
+        }
+        if (duration !== undefined && Number.isNaN(Number(duration))) {
+            throw { status: 400, message: "Duration must be a valid number" }
         }
 
         client = await pool.connect();
@@ -159,27 +198,37 @@ export const updateDailyLog = async (req, res) => {
             RETURNING *`;
 
         const values = [
-            message,
-            blocker,
-            duration,
-            tomorrows_plan,
-            project,
+            message || "",
+            blocker || "",
+            duration || 0,
+            tomorrows_plan || "",
+            project || null,
             user.id,
-            user_role,
+            user_role || null,
             id
         ];
 
         const result = await client.query(query, values);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Log not found' });
+            throw { status: 404, message: "Log not found" }
         }
 
-        const allLogs = await fetchAllLogs();
-        res.json(allLogs);
+        logs = await fetchAllLogs({ user_id: user.id });
+        res.json(logs);
     } catch (error) {
         console.error('Error updating daily log:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: user.id })
+            }
+        } catch (fetchError) {
+            console.error("Error while fetching logs after failure ", fetchError)
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || "Internal server error",
+            logs: logs || []
+        })
     } finally {
         if (client) client.release();
     }
