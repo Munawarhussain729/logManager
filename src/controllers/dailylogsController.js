@@ -86,47 +86,55 @@ export const postDailyLog = async (req, res) => {
     }
 };
 
-// Controller to delete a daily log
 export const deleteDailyLog = async (req, res) => {
     let client;
+    let logs = [];
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
-
         const logId = req.params?.id;
         if (!logId) {
-            return res.status(400).send('Log ID is required');
+            throw { status: 400, message: 'Log ID is required' };
         }
-
         client = await pool.connect();
-
         const query = `DELETE FROM logs WHERE id = $1 AND user_id = $2`;
         const result = await client.query(query, [logId, user.id]);
-
-        if (result.rowCount > 0) {
-            const allLogs = await fetchAllLogs({ user_id: user.id });
-            res.json(allLogs);
-        } else {
-            res.status(404).json({ error: 'Log not found or deletion failed' });
+        if (result.rowCount === 0) {
+            throw { status: 404, message: 'Log not found or deletion failed' };
         }
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.json(logs);
     } catch (error) {
         console.error('Error deleting daily log:', error);
-        res.status(500).send('Internal server error');
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error('Error fetching logs after failure:', fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || 'Internal server error',
+            logs: logs || []
+        });
     } finally {
         if (client) client.release();
     }
 };
 
+
 // Controller to fetch a single log detail
 export const getLogDetail = async (req, res) => {
     let client;
+    let logs = [];
+
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
 
         const logId = req.params?.id;
         if (!logId) {
-            return res.status(400).send('Log ID is required');
+            throw { status: 400, message: 'Log ID is required' };
         }
 
         client = await pool.connect();
@@ -134,14 +142,25 @@ export const getLogDetail = async (req, res) => {
         const query = `SELECT * FROM logs WHERE id = $1 AND user_id = $2`;
         const result = await client.query(query, [logId, user.id]);
 
-        if (result.rows?.length > 0) {
-            res.status(200).json(result.rows[0]);
-        } else {
-            res.status(404).send('Log not found');
+        if (result.rows?.length === 0) {
+            throw { status: 404, message: 'Log not found' };
         }
+
+        logs = await fetchAllLogs({ user_id: user.id });
+        return res.status(200).json({ log: result.rows[0], logs });
     } catch (error) {
         console.error('Error fetching log details:', error);
-        res.status(500).send('Internal server error');
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: req?.user?.id });
+            }
+        } catch (fetchError) {
+            console.error('Error fetching logs after failure:', fetchError);
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || 'Internal server error',
+            logs: logs || []
+        });
     } finally {
         if (client) client.release();
     }
