@@ -55,14 +55,14 @@ export const postDailyLog = async (req, res) => {
         if (!created_on) {
             throw { status: 400, message: "Creation date is required" };
         }
-        if (duration !== undefined && isNaN(Number(duration))) {
+        if (duration !== undefined && Number.isNaN(Number(duration))) {
             throw { status: 400, message: "Duration must be a valid number" };
         }
         await createNewLog({
             created_on,
             message: message || null,
             blocker: blocker || null,
-            duration: duration ? parseInt(duration, 10) : null,
+            duration: duration ? Number.parseInt(duration, 10) : null,
             tomorrows_plan: tomorrows_plan || null,
             project: project || null,
             user_id: user.id,
@@ -97,7 +97,7 @@ export const deleteDailyLog = async (req, res) => {
             throw { status: 400, message: 'Log ID is required' };
         }
         client = await pool.connect();
-        const query = `DELETE FROM logs WHERE id = $1 AND user_id = $2`;
+        const query = 'DELETE FROM logs WHERE id = $1 AND user_id = $2';
         const result = await client.query(query, [logId, user.id]);
         if (result.rowCount === 0) {
             throw { status: 404, message: 'Log not found or deletion failed' };
@@ -139,7 +139,7 @@ export const getLogDetail = async (req, res) => {
 
         client = await pool.connect();
 
-        const query = `SELECT * FROM logs WHERE id = $1 AND user_id = $2`;
+        const query = "SELECT * FROM logs WHERE id = $1 AND user_id = $2";
         const result = await client.query(query, [logId, user.id]);
 
         if (result.rows?.length === 0) {
@@ -179,7 +179,7 @@ export const updateDailyLog = async (req, res) => {
         if (!id) {
             throw { status: 400, message: "Valid Log Id is required" }
         }
-        if (duration !== undefined && isNaN(Number(duration))) {
+        if (duration !== undefined && Number.isNaN(Number(duration))) {
             throw { status: 400, message: "Duration must be a valid number" }
         }
 
