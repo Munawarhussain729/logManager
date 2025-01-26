@@ -21,9 +21,10 @@ export const getDailyLogs = async (req, res) => {
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
+        console.log("Login user is ", user);
 
         const [allLogs, allProjects, allRoles] = await Promise.all([
-            fetchAllLogs(),
+            fetchAllLogs({ user_id: user.id }),
             fetchAllProjects(),
             fetchAllRoles()
         ]);
@@ -62,7 +63,7 @@ export const postDailyLog = async (req, res) => {
             user_role
         });
 
-        const allLogs = await fetchAllLogs();
+        const allLogs = await fetchAllLogs({ user_id: user.id });
         res.json(allLogs);
     } catch (error) {
         console.error('Error creating daily log:', error);
@@ -88,7 +89,7 @@ export const deleteDailyLog = async (req, res) => {
         const result = await client.query(query, [logId, user.id]);
 
         if (result.rowCount > 0) {
-            const allLogs = await fetchAllLogs();
+            const allLogs = await fetchAllLogs({ user_id: user.id });
             res.json(allLogs);
         } else {
             res.status(404).json({ error: 'Log not found or deletion failed' });
@@ -134,6 +135,7 @@ export const getLogDetail = async (req, res) => {
 // Controller to update a daily log
 export const updateDailyLog = async (req, res) => {
     let client;
+    let logs = []
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
@@ -141,7 +143,10 @@ export const updateDailyLog = async (req, res) => {
         const { id, message, blocker, duration, tomorrows_plan, project, user_role } = req.body;
 
         if (!id) {
-            return res.status(400).json({ error: 'Log ID is required' });
+            throw { status: 400, message: "Valid Log Id is required" }
+        }
+        if (duration !== undefined && isNaN(Number(duration))) {
+            throw { status: 400, message: "Duration must be a valid number" }
         }
 
         client = await pool.connect();
@@ -159,27 +164,37 @@ export const updateDailyLog = async (req, res) => {
             RETURNING *`;
 
         const values = [
-            message,
-            blocker,
-            duration,
-            tomorrows_plan,
-            project,
+            message || "",
+            blocker || "",
+            duration || 0,
+            tomorrows_plan || "",
+            project || null,
             user.id,
-            user_role,
+            user_role || null,
             id
         ];
 
         const result = await client.query(query, values);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Log not found' });
+            throw { status: 404, message: "Log not found" }
         }
 
-        const allLogs = await fetchAllLogs();
-        res.json(allLogs);
+        logs = await fetchAllLogs({ user_id: user.id });
+        res.json(logs);
     } catch (error) {
         console.error('Error updating daily log:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        try {
+            if (!logs.length) {
+                logs = await fetchAllLogs({ user_id: user.id })
+            }
+        } catch (fetchError) {
+            console.error("Error while fetching logs after failure ", fetchError)
+        }
+        res.status(error?.status || 500).json({
+            error: error?.message || "Internal server error",
+            logs: logs || []
+        })
     } finally {
         if (client) client.release();
     }

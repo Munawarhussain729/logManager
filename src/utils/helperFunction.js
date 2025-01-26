@@ -4,11 +4,11 @@ import pg from 'pg'
 const { Pool } = pg
 const pool = new Pool(dbConfig)
 
-export const fetchAllLogs = async () => {
+export const fetchAllLogs = async ({user_id}) => {
     let client
     try {
         client = await pool.connect();
-        const result = await client.query('SELECT * FROM logs ORDER BY created_on');
+        const result = await client.query('SELECT * FROM logs WHERE user_id = $1 ORDER BY created_on',[user_id]);
         return result.rows
     } catch (error) {
         console.error('Error fetching logs ', error)
