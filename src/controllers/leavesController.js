@@ -15,12 +15,30 @@ const validateUserSession = (req, res) => {
     return user;
 };
 
+const handleError = async (error, res, userId) => {
+    console.error('Error:', error);
+
+    let leaves = [];
+    try {
+        if (userId) {
+            leaves = await fetchAllLeaves({ user_id: userId });
+        }
+    } catch (fetchError) {
+        console.error('Error fetching leaves after failure:', fetchError);
+    }
+
+    res.status(error?.status || 500).json({
+        error: error?.message || 'Internal Server Error',
+        leaves: leaves || []
+    });
+};
+
 export const getAllLeaves = async (req, res) => {
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
 
-        const allLeaves = await fetchAllLeaves();
+        const allLeaves = await fetchAllLeaves({ user_id: user.id });
         res.render('layouts/main', {
             title: 'Leaves',
             contentFile: '../leaves/leaves',
@@ -29,8 +47,7 @@ export const getAllLeaves = async (req, res) => {
             loggedInUserId: user.id,
         });
     } catch (error) {
-        console.error('Error fetching all leaves:', error);
-        res.status(500).send('Internal Server Error');
+        handleError(error, res, req?.session?.user?.id);
     }
 };
 
@@ -41,15 +58,21 @@ export const postLeave = async (req, res) => {
 
         const { subject, body, startDate, endDate } = req.body;
         if (!subject || !body || !startDate || !endDate) {
-            return res.status(400).send('All fields are required.');
+            throw { status: 400, message: 'All fields are required.' };
         }
 
-        await createNewLeave({ userId: user.id, subject, body, startDate, endDate });
-        const allLeaves = await fetchAllLeaves();
-        res.json(allLeaves);
+        await createNewLeave({
+            userId: user.id,
+            subject: subject.trim(),
+            body: body.trim(),
+            startDate,
+            endDate,
+        });
+
+        const leaves = await fetchAllLeaves({ user_id: user.id });
+        res.json(leaves);
     } catch (error) {
-        console.error('Error creating leave:', error);
-        res.status(500).send('Internal Server Error');
+        handleError(error, res, req?.session?.user?.id);
     }
 };
 
@@ -61,7 +84,7 @@ export const updateLeave = async (req, res) => {
 
         const { id, subject, body, startDate, endDate } = req.body;
         if (!id || !subject || !body || !startDate || !endDate) {
-            return res.status(400).send('All fields, including leave ID, are required.');
+            throw { status: 400, message: 'All fields, including leave ID, are required.' };
         }
 
         client = await pool.connect();
@@ -71,18 +94,17 @@ export const updateLeave = async (req, res) => {
             WHERE id = $6
             RETURNING *;
         `;
-        const values = [user.id, subject, body, startDate, endDate, id];
+        const values = [user.id, subject.trim(), body.trim(), startDate, endDate, id];
         const result = await client.query(query, values);
 
         if (result.rowCount === 0) {
-            return res.status(404).send('Leave not found or not updated.');
+            throw { status: 404, message: 'Leave not found or not updated.' };
         }
 
-        const allLeaves = await fetchAllLeaves();
+        const allLeaves = await fetchAllLeaves({ user_id: user.id });
         res.json(allLeaves);
     } catch (error) {
-        console.error('Error updating leave:', error);
-        res.status(500).send('Internal Server Error');
+        handleError(error, res, req?.session?.user?.id);
     } finally {
         if (client) client.release();
     }
@@ -96,7 +118,7 @@ export const getLeave = async (req, res) => {
 
         const leaveId = req.params.id;
         if (!leaveId) {
-            return res.status(400).send('Leave ID is required.');
+            throw { status: 400, message: 'Leave ID is required.' };
         }
 
         client = await pool.connect();
@@ -110,10 +132,9 @@ export const getLeave = async (req, res) => {
         if (result.rows.length > 0) {
             return res.status(200).json(result.rows[0]);
         }
-        res.status(404).send('Leave not found.');
+        throw { status: 404, message: 'Leave not found.' };
     } catch (error) {
-        console.error('Error fetching leave:', error);
-        res.status(500).send('Internal Server Error');
+        handleError(error, res, req?.session?.user?.id);
     } finally {
         if (client) client.release();
     }
@@ -127,7 +148,7 @@ export const deleteLeave = async (req, res) => {
 
         const leaveId = req.params.id;
         if (!leaveId) {
-            return res.status(400).send('Leave ID is required.');
+            throw { status: 400, message: 'Leave ID is required.' };
         }
 
         client = await pool.connect();
@@ -139,13 +160,12 @@ export const deleteLeave = async (req, res) => {
         const result = await client.query(query, values);
 
         if (result.rowCount > 0) {
-            const allLeaves = await fetchAllLeaves();
+            const allLeaves = await fetchAllLeaves({ user_id: user.id });
             return res.json(allLeaves);
         }
-        res.status(404).send('Leave not found.');
+        throw { status: 404, message: 'Leave not found.' };
     } catch (error) {
-        console.error('Error deleting leave:', error);
-        res.status(500).send('Internal Server Error');
+        handleError(error, res, req?.session?.user?.id);
     } finally {
         if (client) client.release();
     }
