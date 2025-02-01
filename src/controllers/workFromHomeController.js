@@ -6,20 +6,49 @@ import { USER_ID } from "../../constants.js";
 const { Pool } = pg
 const pool = new Pool(dbConfig)
 
+const validateUserSession = (req, res) => {
+    const { user } = req.session;
+    if (!user?.id) {
+        res.status(401).send('Unauthorized: Please log in again.');
+        return null;
+    }
+    return user;
+};
+
+const handleError = async (error, res, userId) => {
+    console.error('Error:', error);
+
+    let workFromHome = [];
+    try {
+        if (userId) {
+            workFromHome = await fetchAllWorkFromHome({ user_id: userId });
+        }
+    } catch (fetchError) {
+        console.error('Error fetching work from home after failure:', fetchError);
+    }
+
+    res.status(error?.status || 500).json({
+        error: error?.message || 'Internal Server Error',
+        leaves: workFromHome || []
+    });
+};
+
+
 export const getAllWorkFromHome = async (req, res) => {
     try {
-        const allLeaves = await fetchAllWorkFromHome()
+        const user = validateUserSession(req, res);
+        if (!user) return;
+        const workFromHome = await fetchAllWorkFromHome({ user_id: user.id })
         res.render('layouts/main',
             {
                 title: 'Work From Home',
                 contentFile: '../workFromHome/workFromHome',
-                leaves: allLeaves,
+                leaves: workFromHome,
                 showSidebar: true,
-                loggedInUserId: USER_ID
+                loggedInUserId: user.id
             });
     } catch (error) {
-        console.error('Daily loog error ', error)
-        res.status(500).send('Internal server error');
+        handleError(error, res, req?.session?.user?.id);
     }
 
 }
