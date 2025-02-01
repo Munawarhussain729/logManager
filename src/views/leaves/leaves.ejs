@@ -91,9 +91,10 @@
                     form.querySelector('textarea[name="body"]').value = leaveData.body;
                     form.querySelector('input[name="startDate"]').value = leaveData.startDate;
                     form.querySelector('input[name="endDate"]').value = leaveData.endDate;
+                    form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
                 })
             })
-            form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
+         
         }
         function addDeleteEventListners() {
             const deleteButtons = document.querySelectorAll(".delete-leave-button")
