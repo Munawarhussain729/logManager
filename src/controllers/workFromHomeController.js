@@ -101,7 +101,7 @@ export const updateWorkFromHome = async (req, res) => {
         "endDate" = $5
         WHERE id = $6
         RETURNING *`
-        const values = [userId, subject, body, startDate, endDate, parseInt(id, 10)];
+        const values = [userId, subject, body, startDate, endDate, Number.parseInt(id, 10)];
         client = await pool.connect()
         const result = await client.query(query, values)
 
