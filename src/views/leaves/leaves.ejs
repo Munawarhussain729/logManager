@@ -53,10 +53,10 @@
                         <%= leave.status %>
                     </td>
                     <td style="text-align: center;">
-                        <button id="edit-log-button" class="edit-leave-button" data-id="<%= leave.id %>" title="Edit">
+                        <button id="edit-leave-button" class="edit-leave-button" data-id="<%= leave.id %>" title="Edit">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button id="delete-log-button" class="delete-leave-button" data-id="<%= leave.id %>"
+                        <button id="delete-leave-button" class="delete-leave-button" data-id="<%= leave.id %>"
                             title="Delete">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -70,8 +70,67 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById("log-form");
-        const submitButton = document.querySelector('.add-log-button');
+        const submitButton = document.querySelector('.add-leave-button');
         const logsTableBody = document.querySelector('tbody');  // Select the <tbody> element
+        const editButton = document.getElementById("edit-leave-button")
+
+
+        function addAllLeaves(updatedLeaves) {
+            logsTableBody.innerHTML = ''; // Clear existing logs
+            updatedLeaves?.forEach((leave, index) => {
+                const row = document.createElement('tr');
+                row.classList.add('logs-table-row');
+                row.setAttribute('data-id', leave.id);
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${leave.subject}</td>
+                    <td>${leave.body}</td>
+                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
+                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
+                    <td>${leave.status}</td>
+                      <td style="text-align: center;">
+                        <button id="edit-leave-button" class="edit-leave-button" data-id=${leave.id} title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button id="delete-leave-button" class="delete-leave-button" data-id=${leave.id}
+                            title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                logsTableBody.appendChild(row);
+
+            });
+            addEventListeners()
+            addDeleteEventListners()
+            form.reset()
+            form.querySelector('button[name="add-leave-button"]').textContent = "Request Leave";
+        }
+
+        function addDeleteEventListners() {
+
+            const deleteButtons = document.querySelectorAll(".delete-leave-button")
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const logId = this.getAttribute("data-id")
+                    fetch(`/leaves/${logId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': "application/json",
+                        }
+                    }).then(response => response.json())
+                        .then(updatedLeaves => {
+                            addAllLeaves(updatedLeaves)
+                        })
+                        .catch(error => {
+                            console.error("Error deleting leave:", error);
+                        });
+                })
+            })
+        }
+
 
         function addEventListeners() {
             const editButtons = document.querySelectorAll('.edit-leave-button')
@@ -94,65 +153,12 @@
                     form.querySelector('button[name="add-leave-button"]').textContent = "Edit Request";
                 })
             })
-         
-        }
-        function addDeleteEventListners() {
-            const deleteButtons = document.querySelectorAll(".delete-leave-button")
-            deleteButtons.forEach(button => {
-                button.addEventListener("click", function () {
-                    const logId = this.getAttribute("data-id")
-                    fetch(`/leaves/${logId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'Content-Type': "application/json",
-                        }
-                    }).then(response => response.json())
-                        .then(updatedLeaves => {
-                            addAllLeaves(updatedLeaves)
-                        })
-                        .catch(error => {
-                            console.error("Error deleting leave:", error);
-                        });
-                })
-            })
-        }
 
-        function addAllLeaves(updatedLeaves) {
-            logsTableBody.innerHTML = ''; // Clear existing logs
-            updatedLeaves?.forEach((leave, index) => {
-                const row = document.createElement('tr');
-                row.classList.add('logs-table-row');
-                row.setAttribute('data-id', leave.id);
-
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${leave.subject}</td>
-                    <td>${leave.body}</td>
-                    <td>${new Date(leave.startDate).toISOString().split('T')[0]}</td>
-                    <td>${new Date(leave.endDate).toISOString().split('T')[0]}</td>
-                    <td>${leave.status}</td>
-                      <td style="text-align: center;">
-                        <button id="edit-log-button" class="edit-leave-button" data-id=${leave.id} title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button id="delete-log-button" class="delete-log-button" data-id=${leave.id}
-                            title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-
-                logsTableBody.appendChild(row);
-
-            });
-            addEventListeners()
-            addDeleteEventListners()
-            form.reset()
-            form.querySelector('button[name="add-leave-button"]').textContent = "Request Leave";
         }
 
         addEventListeners()
         addDeleteEventListners()
+
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 
@@ -176,8 +182,6 @@
                 .then(response => response.json())
                 .then(updatedLeaves => {
                     addAllLeaves(updatedLeaves)
-                    // Optionally, reset the form after submission
-                    form.reset();
                 })
                 .catch(error => {
                     console.error("Error submitting form:", error);
