@@ -36,11 +36,11 @@ export const fetchAllLeaves = async ({ user_id }) => {
 
     }
 }
-export const fetchAllWorkFromHome = async () => {
+export const fetchAllWorkFromHome = async ({ user_id }) => {
     let client
     try {
         client = await pool.connect();
-        const result = await client.query('SELECT * FROM work_from_home ORDER BY "createdOn"');
+        const result = await client.query('SELECT * FROM work_from_home WHERE user_id = $1 ORDER BY "createdOn"', [user_id]);
         return result.rows
     } catch (error) {
         console.error('Error fetching leaves ', error)
