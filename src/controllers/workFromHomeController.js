@@ -54,9 +54,11 @@ export const getAllWorkFromHome = async (req, res) => {
 }
 export const postWorkFromHome = async (req, res) => {
     try {
-        const { userId, subject, body, startDate, endDate, createdOn, status } = req.body
-        await createNewWorkFromHome({ userId, subject, body, startDate, endDate })
-        const allLeaves = await fetchAllWorkFromHome({ user_id: userId })
+        const user = validateUserSession(req, res);
+        if (!user) return;
+        const { subject, body, startDate, endDate, createdOn, status } = req.body
+        await createNewWorkFromHome({ userId: user.id, subject, body, startDate, endDate })
+        const allLeaves = await fetchAllWorkFromHome({ user_id: user.id })
         res.json(allLeaves);
     } catch (error) {
         handleError(error, res, req?.session?.user?.id);
@@ -78,7 +80,7 @@ export const getLeave = async (req, res) => {
             res.status(200).send(results.rows[0])
             return
         }
-        res.status(400).send("Leave does not exists")
+        throw { status: 404, message: 'Leave not found.' };
     } catch (error) {
         console.error('Leave get error ', error)
         res.status(500).send('Internal Server Error')
@@ -90,6 +92,8 @@ export const getLeave = async (req, res) => {
 }
 export const deleteWorkFromHome = async (req, res) => {
     let client
+    const user = validateUserSession(req, res)
+    if (!user) return
 
     const leaveId = req.params?.id
     try {
@@ -97,17 +101,16 @@ export const deleteWorkFromHome = async (req, res) => {
             res.statusCode(400).send("Leave id is missing")
         }
         client = await pool.connect()
-        const query = `DELETE FROM work_from_home WHERE id = ${leaveId}`
-        const results = await client.query(query)
+        const query = 'DELETE FROM work_from_home WHERE id = $1 AND user_id =$2'
+        const results = await client.query(query, [leaveId, user?.id])
         if (results.rowCount > 0) {
-            const allLeaves = await fetchAllWorkFromHome();
+            const allLeaves = await fetchAllWorkFromHome({ user_id: user.id });
             res.json(allLeaves);
             return
         }
-        res.status(400).send("Leave does not exists")
+        throw { status: 404, message: 'Leave not found.' };
     } catch (error) {
-        console.error('Leave delete error ', error)
-        res.status(500).send('Internal Server Error')
+        handleError(error, res, res?.session?.user)
     } finally {
         if (client) {
             client.release();
@@ -117,8 +120,10 @@ export const deleteWorkFromHome = async (req, res) => {
 
 export const updateWorkFromHome = async (req, res) => {
     let client;
+    const user = validateUserSession(req, res)
+    if (!user) return;
     try {
-        const { id, userId, subject, body, startDate, endDate, createdOn, status } = req.body
+        const { id, subject, body, startDate, endDate, createdOn, status } = req.body
         if (!id) {
             return res.status(400).send("leave ID is requried")
         }
@@ -129,18 +134,17 @@ export const updateWorkFromHome = async (req, res) => {
         "endDate" = $5
         WHERE id = $6
         RETURNING *`
-        const values = [userId, subject, body, startDate, endDate, Number.parseInt(id, 10)];
+        const values = [user.id, subject, body, startDate, endDate, Number.parseInt(id, 10)];
         client = await pool.connect()
         const result = await client.query(query, values)
 
         if (result.rowCount === 0) {
             return res.status(400).send("leave does not updated.")
         }
-        const allLeaves = await fetchAllWorkFromHome()
+        const allLeaves = await fetchAllWorkFromHome({ user_id: user.id })
         res.json(allLeaves)
     } catch (error) {
-        console.error('Daily leave post error ', error)
-        res.status(500).send('Internal Server Error')
+        handleError(error, res, req?.session?.user?.id)
     } finally {
         if (client) {
             client.release();

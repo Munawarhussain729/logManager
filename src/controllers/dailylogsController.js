@@ -21,8 +21,6 @@ export const getDailyLogs = async (req, res) => {
     try {
         const user = validateUserSession(req, res);
         if (!user) return;
-        console.log("Login user is ", user);
-
         const [allLogs, allProjects, allRoles] = await Promise.all([
             fetchAllLogs({ user_id: user.id }),
             fetchAllProjects(),
