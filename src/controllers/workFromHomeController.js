@@ -56,11 +56,10 @@ export const postWorkFromHome = async (req, res) => {
     try {
         const { userId, subject, body, startDate, endDate, createdOn, status } = req.body
         await createNewWorkFromHome({ userId, subject, body, startDate, endDate })
-        const allLeaves = await fetchAllWorkFromHome()
+        const allLeaves = await fetchAllWorkFromHome({ user_id: userId })
         res.json(allLeaves);
     } catch (error) {
-        console.error('Daily loog error ', error)
-        res.status(500).send('Internal server error');
+        handleError(error, res, req?.session?.user?.id);
     }
 
 }
