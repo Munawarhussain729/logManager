@@ -4,38 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
-    <!-- <link href='https://unpkg.com/fullcalendar@5.10.1/main.min.css' rel='stylesheet' /> -->
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .datepicker.datepicker-inline {
-            display: none !important;
+        body {
+            color: white;
+        }
+        h1, h2, h6, p, li {
+            color: white !important;
         }
     </style>
 </head>
 
 <body>
+
     <div class="dashboard">
-        <div class="body">
-            <h1>Welcome to the <%= title %>
-            </h1>
+        <div class="content">
+            <h1>Welcome to <%= title %></h1>
             <div class="flex-container">
                 <div>
-                    <p style="margin-top: 10px; margin-bottom: 10px;">Today's Hours</p>
+                    <p>Today's Hours</p>
                     <p class="boldText" id="daily-hours"><%= currentDayHours %> hours</p>
                 </div>
                 <div>
-                    <p style="margin-top: 10px; margin-bottom: 10px;">Time logged in July 2024</p>
-                    <p class="boldText">
-                        <%= duration %> hours
-                    </p>
+                    <p>Time logged in July 2024</p>
+                    <p class="boldText"><%= duration %> hours</p>
+                </div>
+            </div>
+
+            <div class="flex-container" style="margin-top: 20px;">
+                <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
+                    <h2>Recent Logs</h2>
+                    <ul>
+                        <li>Log 1 - 2 hours</li>
+                        <li>Log 2 - 3 hours</li>
+                        <li>Log 3 - 1.5 hours</li>
+                    </ul>
+                </div>
+                <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
+                    <h2>Productivity Stats</h2>
+                    <canvas id="productivityChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('productivityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Hours Logged',
+                        data: [2, 4, 3, 5, 6, 7, 4],
+                        backgroundColor: '#1abc9c'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'white' // X-axis text color
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'white' // Y-axis text color
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

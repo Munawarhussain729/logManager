@@ -1,5 +1,6 @@
 import dbConfig from "../dbconfig.js";
 import pg from 'pg';
+import { fetchAllLogs } from "../utils/helperFunction.js";
 
 const { Pool } = pg;
 const pool = new Pool(dbConfig);
@@ -35,10 +36,14 @@ export const getDashboard = async (req, res) => {
         ]);
         const totalHours = totalHoursResult.rows[0]?.total_hours || 0;
         const todayHours = currentDayHoursResult.rows[0]?.today_hours || 0;
+        const allLogs = await fetchAllLogs({ user_id: user?.id })
         res.render('layouts/main', {
             title: 'Dashboard',
             duration: totalHours,
             currentDayHours: todayHours,
+            totalLeaves: 5,
+            pendingLeaves: 3,
+            recentLogs: allLogs,
             showSidebar: true,
             contentFile: '../dashboard/dashboard'
         });
