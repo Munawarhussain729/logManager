@@ -4,14 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             color: white;
         }
-        h1, h2, h6, p, li {
+
+        h1,
+        h2,
+        h6,
+        p,
+        li {
             color: white !important;
         }
     </style>
@@ -21,15 +28,20 @@
 
     <div class="dashboard">
         <div class="content">
-            <h1>Welcome to <%= title %></h1>
+            <h1>Welcome to <%= title %>
+            </h1>
             <div class="flex-container">
                 <div>
                     <p>Today's Hours</p>
-                    <p class="boldText" id="daily-hours"><%= currentDayHours %> hours</p>
+                    <p class="boldText" id="daily-hours">
+                        <%= currentDayHours %> hours
+                    </p>
                 </div>
                 <div>
                     <p>Time logged in July 2024</p>
-                    <p class="boldText"><%= duration %> hours</p>
+                    <p class="boldText">
+                        <%= duration %> hours
+                    </p>
                 </div>
             </div>
 
@@ -37,9 +49,11 @@
                 <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
                     <h2>Recent Logs</h2>
                     <ul>
-                        <li>Log 1 - 2 hours</li>
-                        <li>Log 2 - 3 hours</li>
-                        <li>Log 3 - 1.5 hours</li>
+                        <% recentLogs.forEach(log=> { %>
+                            <li>
+                                <%= log.message %>
+                            </li>
+                            <% }); %>
                     </ul>
                 </div>
                 <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
