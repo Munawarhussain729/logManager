@@ -32,21 +32,21 @@ export const getDashboard = async (req, res) => {
         const pendingLeavesQuery = `
             SELECT COUNT(*) AS total FROM leaves WHERE status = $1 AND user_id = $2
         `;
-        const approvedLeavesQuery = `
-            SELECT COUNT(*) AS total FROM leaves WHERE status = $1 AND user_id = $2
+        const totalLeavesQuery = `
+            SELECT COUNT(*) AS total FROM leaves WHERE user_id = $1
         `;
 
-        const [totalHoursResult, currentDayHoursResult, pendingLeavesResult, approvedLeavesResult] = await Promise.all([
+        const [totalHoursResult, currentDayHoursResult, pendingLeavesResult, totalLeavesResult] = await Promise.all([
             client.query(totalHoursQuery, [user.id]),
             client.query(currentDayHoursQuery, [user.id, formattedDate]),
-            client.query(pendingLeavesQuery, ["pending", user.id]),
-            client.query(approvedLeavesQuery, ["approved", user.id])
+            client.query(pendingLeavesQuery, ["Pending", user.id]),
+            client.query(totalLeavesQuery, [ user.id])
         ]);
 
         const totalHours = totalHoursResult.rows[0]?.total_hours || 0;
         const todayHours = currentDayHoursResult.rows[0]?.today_hours || 0;
         const pendingLeaves = pendingLeavesResult.rows[0]?.total || 0;
-        const totalLeaves = approvedLeavesResult.rows[0]?.total || 0;
+        const totalLeaves = totalLeavesResult.rows[0]?.total || 0;
         const allLogs = await fetchAllLogs({ user_id: user?.id });
 
         res.render('layouts/main', {
