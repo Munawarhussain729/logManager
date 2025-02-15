@@ -43,19 +43,38 @@
                         <%= duration %> hours
                     </p>
                 </div>
+                <div>
+                    <p>Total Leaves</p>
+                    <p class="boldText">
+                        <%= totalLeaves %>
+                    </p>
+                </div>
+                <div>
+                    <p>Pending Leaves</p>
+                    <p class="boldText">
+                        <%= pendingLeaves %>
+                    </p>
+                </div>
             </div>
+
 
             <div class="flex-container" style="margin-top: 20px;">
                 <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
                     <h2>Recent Logs</h2>
-                    <ul>
+                    <ul style="list-style: none; padding: 0;">
                         <% recentLogs.forEach(log=> { %>
-                            <li>
+                            <li
+                                style="padding: 10px; margin-bottom: 8px; background-color: #2c3e50; border-radius: 5px;">
+                                <strong>
+                                    <%= log.timestamp %>:
+                                </strong>
                                 <%= log.message %>
                             </li>
                             <% }); %>
                     </ul>
                 </div>
+
+
                 <div style="flex: 1; padding: 15px; background-color: #34495e; border-radius: 8px;">
                     <h2>Productivity Stats</h2>
                     <canvas id="productivityChart"></canvas>
@@ -66,35 +85,37 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('productivityChart').getContext('2d');
-            new Chart(ctx, {
+            // Injecting EJS variables into JavaScript
+            const productivityLabels = JSON.parse('<%- JSON.stringify(productivityLabels) %>');
+            const productivityData = JSON.parse('<%- JSON.stringify(productivityData) %>');
+
+            const ctx = document.getElementById('productivityChart');
+            if (!ctx) {
+                console.error("Chart canvas not found!");
+                return;
+            }
+
+            new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    labels: productivityLabels,
                     datasets: [{
                         label: 'Hours Logged',
-                        data: [2, 4, 3, 5, 6, 7, 4],
+                        data: productivityData,
                         backgroundColor: '#1abc9c'
                     }]
                 },
                 options: {
                     responsive: true,
                     scales: {
-                        x: {
-                            ticks: {
-                                color: 'white' // X-axis text color
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: 'white' // Y-axis text color
-                            }
-                        }
+                        x: { ticks: { color: 'white' } },
+                        y: { ticks: { color: 'white' } }
                     }
                 }
             });
         });
     </script>
+
 </body>
 
 </html>

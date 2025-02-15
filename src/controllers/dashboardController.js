@@ -27,26 +27,58 @@ export const getDashboard = async (req, res) => {
         const currentDayHoursQuery = `
             SELECT SUM(duration) AS today_hours
             FROM logs
-            WHERE user_id = $1 AND created_on = $2
+            WHERE user_id = $1 AND DATE(created_on) = $2
+        `;
+        const pendingLeavesQuery = `
+            SELECT COUNT(*) AS total FROM leaves WHERE status = $1 AND user_id = $2
+        `;
+        const totalLeavesQuery = `
+            SELECT COUNT(*) AS total FROM leaves WHERE user_id = $1
+        `;
+        const productivityQuery = `
+            SELECT TO_CHAR(created_on, 'YYYY-MM-DD') AS date, SUM(duration) AS total_hours
+            FROM logs
+            WHERE user_id = $1 AND created_on >= CURRENT_DATE - INTERVAL '6 days'
+            GROUP BY date
+            ORDER BY date ASC
         `;
 
-        const [totalHoursResult, currentDayHoursResult] = await Promise.all([
+        const [
+            totalHoursResult,
+            currentDayHoursResult,
+            pendingLeavesResult,
+            totalLeavesResult,
+            productivityResult
+        ] = await Promise.all([
             client.query(totalHoursQuery, [user.id]),
-            client.query(currentDayHoursQuery, [user.id, formattedDate])
+            client.query(currentDayHoursQuery, [user.id, formattedDate]),
+            client.query(pendingLeavesQuery, ["Pending", user.id]),
+            client.query(totalLeavesQuery, [user.id]),
+            client.query(productivityQuery, [user.id])
         ]);
+
         const totalHours = totalHoursResult.rows[0]?.total_hours || 0;
         const todayHours = currentDayHoursResult.rows[0]?.today_hours || 0;
-        const allLogs = await fetchAllLogs({ user_id: user?.id })
+        const pendingLeaves = pendingLeavesResult.rows[0]?.total || 0;
+        const totalLeaves = totalLeavesResult.rows[0]?.total || 0;
+        const allLogs = await fetchAllLogs({ user_id: user?.id });
+
+        const labels = productivityResult.rows.map(row => row.date);
+        const data = productivityResult.rows.map(row => row.total_hours);
+
         res.render('layouts/main', {
             title: 'Dashboard',
             duration: totalHours,
             currentDayHours: todayHours,
-            totalLeaves: 5,
-            pendingLeaves: 3,
+            totalLeaves: totalLeaves,
+            pendingLeaves: pendingLeaves,
             recentLogs: allLogs,
+            productivityLabels: labels,  // No JSON.stringify needed
+            productivityData: data,       // Ensure JSON format
             showSidebar: true,
             contentFile: '../dashboard/dashboard'
         });
+
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Internal Server Error');
