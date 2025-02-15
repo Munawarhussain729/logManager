@@ -20,6 +20,7 @@ export const fetchAllLogs = async ({ user_id }) => {
 
     }
 }
+
 export const fetchAllLeaves = async ({ user_id }) => {
     let client
     try {
