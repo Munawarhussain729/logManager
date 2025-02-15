@@ -86,18 +86,15 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Injecting EJS variables into JavaScript
-            const productivityLabels = <%- productivityLabels %>;
-            const productivityData = <%- productivityData %>;
-    
-            console.log("productivityLabels: ", productivityLabels);
-            console.log("productivityData: ", productivityData);
-    
+            const productivityLabels = JSON.parse('<%- JSON.stringify(productivityLabels) %>');
+            const productivityData = JSON.parse('<%- JSON.stringify(productivityData) %>');
+
             const ctx = document.getElementById('productivityChart');
             if (!ctx) {
                 console.error("Chart canvas not found!");
                 return;
             }
-    
+
             new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -118,7 +115,7 @@
             });
         });
     </script>
-    
+
 </body>
 
 </html>

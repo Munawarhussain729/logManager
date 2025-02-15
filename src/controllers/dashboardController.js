@@ -73,12 +73,12 @@ export const getDashboard = async (req, res) => {
             totalLeaves: totalLeaves,
             pendingLeaves: pendingLeaves,
             recentLogs: allLogs,
-            productivityLabels: JSON.stringify(labels),  // Ensure JSON format
-            productivityData: JSON.stringify(data),      // Ensure JSON format
+            productivityLabels: labels,  // No JSON.stringify needed
+            productivityData: data,       // Ensure JSON format
             showSidebar: true,
             contentFile: '../dashboard/dashboard'
         });
-        
+
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Internal Server Error');
