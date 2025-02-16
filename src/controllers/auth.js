@@ -36,7 +36,7 @@ export const postLogin = async (req, res) => {
         if (user.password !== password) {
             return res.status(401).send('Invalid password for the email');
         }
-        req.session.user = { id: user.id, email: user.email, name: user.name };
+        req.session.user = { id: user.id, email: user.email, name: user.name, role:user.role };
         res.redirect('/dashboard');
     } catch (error) {
         console.error('Login loog error ', error)

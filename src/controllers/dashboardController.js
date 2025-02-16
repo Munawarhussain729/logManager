@@ -1,6 +1,7 @@
 import dbConfig from "../dbconfig.js";
 import pg from 'pg';
 import { fetchAllLogs } from "../utils/helperFunction.js";
+import { ADMIN_ID } from "../../constants.js";
 
 const { Pool } = pg;
 const pool = new Pool(dbConfig);
@@ -11,6 +12,7 @@ export const getDashboard = async (req, res) => {
     if (!user || !user.id) {
         return res.redirect('/login');
     }
+    console.log("user ", user);
 
     let client;
     try {
@@ -18,7 +20,16 @@ export const getDashboard = async (req, res) => {
 
         const date = new Date();
         const formattedDate = date.toISOString().split('T')[0];
-
+        if (user.role === ADMIN_ID) {
+            
+            console.log("Admin");
+            res.render('layouts/main', {
+                title: 'Dashboard',
+                showSidebar: true,
+                contentFile: '../dashboard/adminDashboard'
+            });
+            return;
+        }
         const totalHoursQuery = `
             SELECT SUM(duration) AS total_hours
             FROM logs
