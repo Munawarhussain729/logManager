@@ -10,10 +10,11 @@ export async function up(knex) {
 
     // Inserting initial roles
     await knex('user_roles').insert([
-        { title: 'Project Manager' },
+        { title: 'Admin' },
         { title: 'Frontend Developer' },
         { title: 'Backend Developer' },
-        { title: 'Software Engineer' }
+        { title: 'Software Engineer' },
+        { title: 'Project Manager' },
     ]);
 };
 

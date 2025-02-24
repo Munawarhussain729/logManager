@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="./dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            color: white;
+        }
+
+        h1,
+        h2,
+        h6,
+        p,
+        li {
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="dashboard-top-bar">
+            <div class="card">
+                <p>Total Employees</p>
+                <p>
+                    <%=totalEmployees %>
+                </p>
+            </div>
+            <div class="card">
+                <p> On Leave Today</p>
+                <p>
+                    <%=employeesOnLeave %>
+                </p>
+            </div>
+            <div class="card">
+                <p>Pending Leaves</p>
+                <p>
+                    <%=pendingLeaves %>
+                </p>
+            </div>
+            <div class="card">
+                <p>Pending Leaves</p>
+                <p>
+                    <%=pendingWorkFromHome %>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
